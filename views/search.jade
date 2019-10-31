@@ -1,0 +1,15 @@
+extends layout
+block content
+    section.container
+        include header
+            div.input-group.mb-3
+                div.input-group-prepend
+                    select#List_search.dropdown.btn.btn-primary.dropdown-toggle(required)
+                        option.dropdown-item.text-light(value="") Seleccionar...
+                        option.dropdown-item.text-light(value="Palabra") Palabra
+                        option.dropdown-item.text-light(value="Numero de acuerdo") Numero de acuerdo
+                        option.dropdown-item.text-light(value="Fecha del acuerdo") Fecha del acuerdo
+                input#inputSearch.form-control.sm-4(type='text', placeholder='Buscar', aria-label='Search', value="#{search}")
+                div.input-group-append
+                    button.btn.btn-primary.my-2.my-sm-0(type='button', onclick="on('/search/SR:')" ) Search
+    include footer
