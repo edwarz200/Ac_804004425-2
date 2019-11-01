@@ -5,14 +5,15 @@ var ACModel = require('../models/RAM-model'),
     // algolia = require('../models/RAM-Algolia'),
     ACController = () => {}
 ACController.push = (req, res, next) => {
-    let id = "req.body.acuerdo_id",
+    let id = req.body.acuerdo_id,
+        idmongo = "req.body.acuerdo_id",
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
             fecha: req.body.fecha,
             detalle: req.body.detalle
         }
-    ACModel.push(id,AC,(err,l) => {
+    ACModel.push(idmongo, id, AC, (err, l) => {
         if (err) {
             let locals = {
                 title: `Error al salvar el registro con el id: ${AC.acuerdo_id}`,
@@ -28,7 +29,8 @@ ACController.push = (req, res, next) => {
 }
 
 ACController.update = (req, res, next) => {
-    let id = req.params._id,
+    let idmongo = req.params._id,
+        id = req.body.acuerdo_id,
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -37,7 +39,7 @@ ACController.update = (req, res, next) => {
         }
     console.log(id)
 
-    ACModel.push(id,AC,(err,l) => {
+    ACModel.push(idmongo, id, AC, (err, l) => {
         if (err) {
             let locals = {
                 title: `Error al salvar el registro con el id: ${AC.acuerdo_id}`,
@@ -56,16 +58,16 @@ ACController.getAll = (req, res, next) => {
     let H_D = req.params.value,
         savee = req.params.guardado,
         childKey = "no paso",
-        c,save
-    ACModel.getAll((err,rows) => {
-        if(err){
+        c, save
+    ACModel.getAll((err, rows) => {
+        if (err) {
             let locals = {
                 title: `Error al obtener los datos`,
                 description: "Error de Sintaxis",
                 error: err
             }
             res.render('error', locals)
-        }else{
+        } else {
             // var childKey = {},
             //     rows, isss = 0
             // snapshot.forEach(function(childSnapshot) {
@@ -77,7 +79,7 @@ ACController.getAll = (req, res, next) => {
             // });
             if (H_D == ":Habilitar") {
                 c = 'false'
-            }if (H_D == ":Habilitar2") {
+            } else if (H_D == ":Habilitar2") {
                 c = 'false'
                 save = "Acuerdo eliminado con exito"
             } else if (H_D == ":Varios") {
@@ -85,9 +87,9 @@ ACController.getAll = (req, res, next) => {
             } else {
                 c = 'true_defect'
             }
-            if(savee==":guardado"){
+            if (savee == ":guardado") {
                 save = "Acuerdo guardado con exito"
-            }else if(savee==":actualizado"){
+            } else if (savee == ":actualizado") {
                 save = "Acuerdo actualizado con exito"
             }
             let locals = {
@@ -120,32 +122,32 @@ ACController.getOne = (req, res, next) => {
     let acuerdo_id = req.params._id
     console.log(acuerdo_id)
 
-    ACModel.getOne(acuerdo_id, (err,rows) => {
+    ACModel.getOne(acuerdo_id, (err, rows) => {
         // let rows = snapshot.val(),
-            let locals = {
-                title: 'Acuerdos Municipales',
-                // id: acuerdo_id,
-                data: rows,
-                op: 'search',
-                data_save: 'heloowda'
-            }
+        let locals = {
+            title: 'Acuerdos Municipales',
+            // id: acuerdo_id,
+            data: rows,
+            op: 'search',
+            data_save: 'heloowda'
+        }
         console.log(rows)
         res.render('edit', locals)
     })
 }
 
 ACController.delete = (req, res, next) => {
-    let acuerdo_id = req.params.acuerdo_id
-    console.log(acuerdo_id)
+    let idmongo = req.params.acuerdo_id,
+        id = req.body.acuerdo_id
+        // console.log(acuerdo_id)
 
-    ACModel.delete(acuerdo_id, function(err) {
+    ACModel.delete(idmongo, id, function(err) {
         if (err) {
             let locals = {
-                title: `Error al eliminar el registro con el id: ${acuerdo_id}`,
+                title: `Error al eliminar el registro con el id: ${id}`,
                 description: "Error de Sintaxis",
                 error: err
             }
-
             res.render('error', locals)
         } else {
             res.redirect('/S_E:Habilitar2')
@@ -212,17 +214,17 @@ ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
         search = "",
         po = ""
-    if(sr != ":"){
+    if (sr != ":") {
         var arrayDeCadenas = sr.split("=")
-        search = arrayDeCadenas[arrayDeCadenas.length-1]
+        search = arrayDeCadenas[arrayDeCadenas.length - 1]
         po = arrayDeCadenas[0]
     }
     let locals = {
-            title: 'Buscar Acuerdo Municipal',
-            op: 'search',
-            search: search,
-            input: po
-        }
+        title: 'Buscar Acuerdo Municipal',
+        op: 'search',
+        search: search,
+        input: po
+    }
     res.render('search', locals)
 
 }

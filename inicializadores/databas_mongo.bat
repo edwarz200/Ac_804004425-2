@@ -1,3 +1,3 @@
 @echooff
-cd C:\Program Files\MongoDB\Server\3.2\bin
+cd C:\Program Files\MongoDB\Server\4.2\bin
 start mongo.exe

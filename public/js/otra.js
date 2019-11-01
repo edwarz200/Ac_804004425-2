@@ -17,38 +17,38 @@ function redirect(l, value) {
 }
 
 function on(h) {
-    var listaAdd,sORa,inputSearch
-    if (h == "/agregar:nums="){
+    var listaAdd, sORa, inputSearch
+    if (h == "/agregar:nums=") {
         listaAdd = document.getElementById("inputGroupSelect01")
         sORa = ""
-    }
-    else if(h == "/search/SR:"){
+    } else if (h == "/search/SR:") {
         listaAdd = document.getElementById("List_search")
         inputSearch = document.getElementById("inputSearch")
-        sORa = "="+inputSearch.value
+        sORa = "=" + inputSearch.value
     }
     location.href = h + listaAdd.value + sORa;
 }
 
 // function onKeyDownHandler(event) {
 
-    $("#inputSearch").keypress(function(event) {
-        if (event.which == 13) {
-          on('/search/SR:')
-        }
-    });
+$("#inputSearch").keypress(function(event) {
+    if (event.which == 13) {
+        on('/search/SR:')
+    }
+});
 
 //     if(codigo >= 65 && codigo <= 90){
 //       console.log(String.fromCharCode(codigo));
 //     }
 
-     
+
 // }
 
 function myfun(h_d, h, e, s) {
     var select = 0,
         selectS = 0,
-        inputGroupSelect01 = document.getElementById("inputGroupSelect01")
+        inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
+        List_search = document.querySelector("#List_search")
     if (h_d == "false") {
         $(".disable").removeAttr('disabled')
         select = 1
@@ -75,15 +75,14 @@ function myfun(h_d, h, e, s) {
     }
     if (inputGroupSelect01 != null)
         inputGroupSelect01.options.item(e).setAttribute('selected', false)
-    
-    if(s==":Palabra"){
-        selectS=1
+
+    if (s == ":Palabra") {
+        selectS = 1
+    } else if (s == ":Numero de acuerdo") {
+        selectS = 2
+    } else if (s == ":Fecha del acuerdo") {
+        selectS = 3
     }
-    else if(s==":Numero de acuerdo"){
-        selectS=2
-    }
-    else if(s==":Fecha del acuerdo"){
-        selectS=3
-    }
-    document.querySelector("#List_search").options.item(selectS).setAttribute('selected', false)
+    if (List_search != null)
+        List_search.options.item(selectS).setAttribute('selected', false)
 }
