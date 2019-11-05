@@ -1,6 +1,8 @@
 window.onload = () => {
     var lista = document.getElementById("S_E"),
-        lista2 = document.getElementById("C_R")
+        lista2 = document.getElementById("C_R"),
+        sync = document.getElementById("sync"),
+        syncInput = document.getElementById("syncInput")
     lista.onchange = () => {
         redirect("S_E", lista.value)
     }
@@ -48,7 +50,8 @@ function myfun(h_d, h, e, s) {
     var select = 0,
         selectS = 0,
         inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
-        List_search = document.querySelector("#List_search")
+        List_search = document.querySelector("#List_search"),
+        sync = document.getElementById("sync")
     if (h_d == "false") {
         $(".disable").removeAttr('disabled')
         select = 1

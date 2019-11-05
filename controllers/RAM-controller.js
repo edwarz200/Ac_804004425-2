@@ -6,7 +6,7 @@ var ACModel = require('../models/RAM-model'),
     ACController = () => {}
 ACController.push = (req, res, next) => {
     let id = req.body.acuerdo_id,
-        idmongo = "req.body.acuerdo_id",
+        idmongo = id,
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -20,10 +20,10 @@ ACController.push = (req, res, next) => {
                 description: "Error de Sintaxis",
                 error: err
             }
-
             res.render('error', locals)
         } else {
-            res.redirect('/save:guardado')
+            let locals = GETALL(":actualizado","")
+            res.render('index', locals)
         }
     })
 }
@@ -49,58 +49,17 @@ ACController.update = (req, res, next) => {
 
             res.render('error', locals)
         } else {
-            res.redirect('/save:actualizado')
+            let locals = GETALL(":guardado","")
+            res.render('index', locals)
         }
     })
 }
 
 ACController.getAll = (req, res, next) => {
     let H_D = req.params.value,
-        savee = req.params.guardado,
-        childKey = "no paso",
-        c, save
-    ACModel.getAll((err, rows) => {
-        if (err) {
-            let locals = {
-                title: `Error al obtener los datos`,
-                description: "Error de Sintaxis",
-                error: err
-            }
-            res.render('error', locals)
-        } else {
-            // var childKey = {},
-            //     rows, isss = 0
-            // snapshot.forEach(function(childSnapshot) {
-            //     childKey[isss] = childSnapshot.key
-            //     rows = snapshot.val()
-            //     console.log(childKey[isss])
-            //     rows.objectID = childKey
-            //     isss++
-            // });
-            if (H_D == ":Habilitar") {
-                c = 'false'
-            } else if (H_D == ":Habilitar2") {
-                c = 'false'
-                save = "Acuerdo eliminado con exito"
-            } else if (H_D == ":Varios") {
-                c = 'false_v'
-            } else {
-                c = 'true_defect'
-            }
-            if (savee == ":guardado") {
-                save = "Acuerdo guardado con exito"
-            } else if (savee == ":actualizado") {
-                save = "Acuerdo actualizado con exito"
-            }
-            let locals = {
-                title: 'Acuerdos Municipales',
-                disables: c,
-                data: rows,
-                data_save: save
-            }
-            res.render('index', locals)
-        }
-    })
+        savee
+        let locals = GETALL(savee,H_D)
+        res.render('index', locals)
 }
 
 ACController.close_reset = (req, res, next) => {
@@ -125,13 +84,13 @@ ACController.getOne = (req, res, next) => {
     ACModel.getOne(acuerdo_id, (err, rows) => {
         // let rows = snapshot.val(),
         let locals = {
-            title: 'Acuerdos Municipales',
-            // id: acuerdo_id,
-            data: rows,
-            op: 'search',
-            data_save: 'heloowda'
-        }
-        console.log(rows)
+                title: 'Acuerdos Municipales',
+                // id: acuerdo_id,
+                data: rows,
+                op: 'search',
+                data_save: 'heloowda'
+            }
+            // console.log(rows)
         res.render('edit', locals)
     })
 }
@@ -196,7 +155,7 @@ ACController.addForm = (req, res, next) => {
             }
         }
         m_idarray[i] = m_id
-        console.log(m_idarray)
+            // console.log(m_idarray)
     }
     var locals = {
         title: 'Agregar Acuerdo Municipal',
@@ -242,6 +201,54 @@ ACController.error404 = (req, res, next) => {
     res.render('error', locals)
 
     next()
+}
+
+function GETALL(savee, H_D){
+    let childKey = "no paso",c,save
+    ACModel.getAll((err, rows) => {
+        if (err) {
+            let locals = {
+                title: `Error al obtener los datos`,
+                description: "Error de Sintaxis",
+                error: err
+            }
+            res.render('error', locals)
+            return locals
+        } else {
+            ACModel.sync()
+                // var childKey = {},
+                //     rows, isss = 0
+                // snapshot.forEach(function(childSnapshot) {
+                //     childKey[isss] = childSnapshot.key
+                //     rows = snapshot.val()
+                //     console.log(childKey[isss])
+                //     rows.objectID = childKey
+                //     isss++
+                // });
+            if (H_D == ":Habilitar") {
+                c = 'false'
+            } else if (H_D == ":Habilitar2") {
+                c = 'false'
+                save = "Acuerdo eliminado con exito"
+            } else if (H_D == ":Varios") {
+                c = 'false_v'
+            } else {
+                c = 'true_defect'
+            }
+            if (savee == ":guardado") {
+                save = "Acuerdo guardado con exito"
+            } else if (savee == ":actualizado") {
+                save = "Acuerdo actualizado con exito"
+            }
+            let locals = {
+                title: 'Acuerdos Municipales',
+                disables: c,
+                data: rows,
+                data_save: save
+            }
+            return locals
+        }
+    })
 }
 
 module.exports = ACController

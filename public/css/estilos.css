@@ -44,6 +44,17 @@
     opacity: .3;
 }
 
+.sync {
+    transition: all 1s .35s linear;
+    transform: translateY(3rem);
+    opacity: 0;
+}
+
+.mostrarSync {
+    opacity: 1;
+    transform: translate(0);
+}
+
 
 /* html { background-color: #1D1D1D; }
 

@@ -6,7 +6,7 @@ block content
 		include header
 		article.item
 			-if(data!="")
-				-console.log("entro"+data)
+				//- -console.log("entro"+data)
 				table.table.table-striped
 					tr.row
 						th.col-1(scope="col") Id
@@ -16,7 +16,6 @@ block content
 						th.col-2(scope="col", colspan="2")
 							div.input-group
 								include add_cant
-					
 					//-var cont=0
 					-each ac in data
 						// -console.log()
