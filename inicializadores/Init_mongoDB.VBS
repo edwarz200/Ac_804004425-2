@@ -2,7 +2,7 @@ dim fso: set fso = CreateObject("Scripting.FileSystemObject")
 dim CurrentDirectory
 CurrentDirectory = fso.GetAbsolutePathName(".")
 dim Directory
-Directory = CurrentDirectory & "\Mongod_oculto.bat"
+Directory = CurrentDirectory & "\Init_mongoDB.bat"
 
 Set WshShell = CreateObject("WScript.Shell")
 WshShell.Run chr(34) & Directory & Chr(34), 0

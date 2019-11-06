@@ -10,7 +10,7 @@ router
     .get('/agregar:cant', ACController.addForm)
     .get('/search/SR:value_search', ACController.searchForm)
     .post('/save', ACController.push)
-    .get('/save:guardado', ACController.getAll)
+    // .get('/save:guardado', ACController.getAll)
     // .post('/save:guardado', ACController.getAll)
     .get('/editar/:_id', ACController.getOne)
     .put('/actualizar/:_id', ACController.update)

@@ -22,15 +22,14 @@ ACController.push = (req, res, next) => {
             }
             res.render('error', locals)
         } else {
-            let locals = GETALL(":actualizado","")
-            res.render('index', locals)
+            GETALL(":guardado","",res,req)
         }
     })
 }
 
 ACController.update = (req, res, next) => {
-    let idmongo = req.params._id,
-        id = req.body.acuerdo_id,
+    let id = req.params._id,
+        idmongo = req.body.acuerdo_id,
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -49,8 +48,7 @@ ACController.update = (req, res, next) => {
 
             res.render('error', locals)
         } else {
-            let locals = GETALL(":guardado","")
-            res.render('index', locals)
+            GETALL(":actualizado","",res,req)
         }
     })
 }
@@ -58,10 +56,8 @@ ACController.update = (req, res, next) => {
 ACController.getAll = (req, res, next) => {
     let H_D = req.params.value,
         savee
-        let locals = GETALL(savee,H_D)
-        res.render('index', locals)
+        GETALL(savee,H_D,res,req)
 }
-
 ACController.close_reset = (req, res, next) => {
     let closeORreset = req.params.CoR,
         id
@@ -141,29 +137,30 @@ ACController.addForm = (req, res, next) => {
     } else if (cant == ":nums=5") {
         c = 4
     }
-    for (var i = 0; i <= c; i++) {
-        var m_id = "AC_",
-            rows = 0
-        for (var j = 0; j < 3; j++) {
-            m_id += letras_a[Math.round(Math.random() * 3)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 26)]
-        }
-        for (var ram = 0; ram < rows.length; ram++) {
-            while (m_id == rows[ram].acuerdo_id) {
-                for (var k = 0; k < 3; k++) {
-                    m_id += letras_a[Math.round(Math.random() * 26)] + Math.round(Math.random() * 26) + letras_A[Math.round(Math.random() * 26)]
-                }
+    ACModel.getAll((err, rows) => {
+        for (var i = 0; i <= c; i++) {
+            var m_id = "AC_"
+            for (var j = 0; j < 3; j++) {
+                m_id += letras_a[Math.round(Math.random() * 26)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 26)]
             }
+            rows.forEach((ram)=>{
+                while (m_id == ram.acuerdo_id) {
+                    for (var k = 0; k < 3; k++) {
+                        m_id += letras_a[Math.round(Math.random() * 26)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 26)]
+                    }
+                }
+            })
+            m_idarray[i] = m_id
+                // console.log(m_idarray)
         }
-        m_idarray[i] = m_id
-            // console.log(m_idarray)
-    }
-    var locals = {
-        title: 'Agregar Acuerdo Municipal',
-        data: m_idarray,
-        nums: c,
-        op: 'search_ag'
-    }
-    res.render('add', locals)
+        var locals = {
+            title: 'Agregar Acuerdo Municipal',
+            data: m_idarray,
+            nums: c,
+            op: 'search_ag'
+        }
+        res.render('add', locals)
+    })
         // }
         // }
         // })
@@ -172,12 +169,30 @@ ACController.addForm = (req, res, next) => {
 ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
         search = "",
-        po = ""
+        po = "",num
     if (sr != ":") {
         var arrayDeCadenas = sr.split("=")
         search = arrayDeCadenas[arrayDeCadenas.length - 1]
         po = arrayDeCadenas[0]
     }
+    if (po==":Palabra") {
+        num = 1
+    }else if(po==":Numero de acuerdo"){
+        num = 2
+    }else if(po==":Fecha del acuerdo"){
+        num = 3
+    }else{
+        num= 0
+    }
+    if(num != 0){
+                console.log("entro")
+        ACModel.search(num,search,async (err, bb) => {
+            for(var i = 0; i<bb.length ; i++){
+                console.log(bb[i])
+            }
+        })
+    }
+    console.log("sr= " + sr + " po= " + po + "search= "+ search)
     let locals = {
         title: 'Buscar Acuerdo Municipal',
         op: 'search',
@@ -203,19 +218,18 @@ ACController.error404 = (req, res, next) => {
     next()
 }
 
-function GETALL(savee, H_D){
-    let childKey = "no paso",c,save
+function GETALL(savee, H_D,res,req){
+    let childKey = "no paso",c,save,num = 0
     ACModel.getAll((err, rows) => {
         if (err) {
-            let locals = {
+            var locals = {
                 title: `Error al obtener los datos`,
                 description: "Error de Sintaxis",
                 error: err
             }
             res.render('error', locals)
-            return locals
         } else {
-            ACModel.sync()
+            // ACModel.sync()
                 // var childKey = {},
                 //     rows, isss = 0
                 // snapshot.forEach(function(childSnapshot) {
@@ -237,17 +251,21 @@ function GETALL(savee, H_D){
             }
             if (savee == ":guardado") {
                 save = "Acuerdo guardado con exito"
+                num = 1
+
             } else if (savee == ":actualizado") {
                 save = "Acuerdo actualizado con exito"
+                num = 2
             }
-            let locals = {
+            var locals = {
                 title: 'Acuerdos Municipales',
                 disables: c,
                 data: rows,
                 data_save: save
             }
-            return locals
         }
+        // console.log(locals)
+        res.render('index', locals)
     })
 }
 

@@ -11,7 +11,6 @@ var conn = require('./RAM-connection'),
 //     console.log('aqui en otro lado')
 // }
 
-ACModel.close_reset = (id, cb) => Cexec.conexec(id, cb)
 
 ACModel.getAll = (cb) => {
     db.find(cb)
@@ -22,9 +21,6 @@ ACModel.getAll = (cb) => {
 
 ACModel.sync = () => {
     conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
-        // if (err) {
-        //     console.log(err)
-        // } else {
         var id, nro_acuerdo, fecha, detalle, data
         db.find((err, c) => {
                 if (err) {
@@ -152,17 +148,24 @@ ACModel.syncMongo = () => {
 
 }
 
-
+ACModel.search = (num,search,cb)=>{
+     // detalle: /search/
+    const Regex = new RegExp(search, 'i')
+    if(num == 1){
+       db.find({ detalle: Regex}).exec(cb)
+    }else if(num == 2){
+       db.find({ nro_acuerdo: Regex}).exec(cb)
+    }else if(num == 3){
+       db.find({ fecha: Regex}).exec(cb)
+    }
+}
 
 ACModel.getOne = (id, cb) => {
     db.findById(id).exec(cb)
-        // conn.ref('RAM/' + id).once('value', cb)
 }
 
 ACModel.push = (idmongo, id, data, cb) => {
-
-    // console.log(data.nro_acuerdo)
-            db.findOne({ acuerdo_id: idmongo }).exec((err, bb) => {
+            db.findOne({ acuerdo_id: idmongo }).exec( (err, bb) => {
                 if (err) {
                 } else {
                     if(bb==null){
@@ -179,13 +182,13 @@ ACModel.push = (idmongo, id, data, cb) => {
                     }else{
                         console.log('no entro al null')
                         var updates = {}
-                        updates['/RAM/' + id] = data
+                        updates['/RAM/' + idmongo] = data
                         conn.ref().update(updates, (err) => {
                             if (err) {
                                 console.log('error al actualizar el dato con el id: ' + id + ' en la nube')
                             } else {
                                 console.log('actualizado')
-                                db.findByIdAndUpdate(idmongo, data, cb)
+                                db.findByIdAndUpdate(id, data, cb)
                             }
                         })
                     }
@@ -193,28 +196,12 @@ ACModel.push = (idmongo, id, data, cb) => {
             })
             db.find({ acuerdo_id: idmongo }).exec(async(err, bb) => {
                 if (err) {
-                    const newAc =  new db(data)
+                    const newAc = new db(data)
                     newAc.save(cb)
                 }else{
                      db.findByIdAndUpdate(idmongo, data, cb)
                 }
             });
-        // if(db.where(id).exists()){
-        //     // const newAc = new db(data)
-        //     // newAc.save(cb)
-        // }else{
-        //     console.log('no entro')
-        // }
-        // conn.ref(`RAM/${id}`).once("value", snapshot => {
-        //     if (snapshot.exists()) {
-        //         var updates = {}
-        //         updates['/RAM/' + id] = data
-        //         conn.ref().update(updates, cb)
-        //     } else {
-
-    //         db.saveDatabase()
-    //     }
-    // })
 }
 
 ACModel.delete = (idmongo, id, cb) => {
@@ -225,5 +212,7 @@ ACModel.delete = (idmongo, id, cb) => {
     })
     db.findByIdAndDelete(idmongo, cb)
 }
+
+ACModel.close_reset = (id, cb) => Cexec.conexec(id, cb)
 
 module.exports = ACModel
