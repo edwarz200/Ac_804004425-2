@@ -13,11 +13,9 @@ var conn = require('./RAM-connection'),
 
 
 ACModel.getAll = (cb) => {
-    db.find(cb)
+    db.find(cb).sort('fecha')
         // conn.ref('RAM/').once('value', cb)
 }
-
-
 
 ACModel.sync = () => {
     conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
@@ -152,10 +150,12 @@ ACModel.search = (num,search,cb)=>{
      // detalle: /search/
     const Regex = new RegExp(search, 'i')
     if(num == 1){
-       db.find({ detalle: Regex}).exec(cb)
+       db.find({ $or: [{nro_acuerdo: Regex} ,{fecha: Regex},{detalle: Regex}]},cb)
     }else if(num == 2){
-       db.find({ nro_acuerdo: Regex}).exec(cb)
+       db.find({ detalle: Regex}).exec(cb)
     }else if(num == 3){
+       db.find({ nro_acuerdo: Regex}).exec(cb)
+    }else if(num == 4){
        db.find({ fecha: Regex}).exec(cb)
     }
 }

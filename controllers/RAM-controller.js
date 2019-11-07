@@ -111,21 +111,11 @@ ACController.delete = (req, res, next) => {
 }
 
 ACController.addForm = (req, res, next) => {
-    // ACModel.getOneAC((err, rows) => {
     var letras_a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
         letras_A = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         cant = req.params.cant,
         c = 0,
         m_idarray = []
-        // if (err) {} else {
-        //     if (err) {
-        //         let locals = {
-        //             title: 'Error al consultar la base de datos',
-        //             description: 'Error de Sintaxis SQL',
-        //             error: err
-        //         }
-        //         res.render('error', locals)
-        //     } else {
     if (cant == ":nums=1") {
         c = 0
     } else if (cant == ":nums=2") {
@@ -141,17 +131,16 @@ ACController.addForm = (req, res, next) => {
         for (var i = 0; i <= c; i++) {
             var m_id = "AC_"
             for (var j = 0; j < 3; j++) {
-                m_id += letras_a[Math.round(Math.random() * 26)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 26)]
+                m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
             }
             rows.forEach((ram)=>{
                 while (m_id == ram.acuerdo_id) {
-                    for (var k = 0; k < 3; k++) {
-                        m_id += letras_a[Math.round(Math.random() * 26)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 26)]
+                    for (var k = 0; k < 1; k++) {
+                        m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
                     }
                 }
             })
             m_idarray[i] = m_id
-                // console.log(m_idarray)
         }
         var locals = {
             title: 'Agregar Acuerdo Municipal',
@@ -161,9 +150,6 @@ ACController.addForm = (req, res, next) => {
         }
         res.render('add', locals)
     })
-        // }
-        // }
-        // })
 }
 
 ACController.searchForm = (req, res, next) => {
@@ -175,14 +161,16 @@ ACController.searchForm = (req, res, next) => {
         search = arrayDeCadenas[arrayDeCadenas.length - 1]
         po = arrayDeCadenas[0]
     }
-    if (po==":Palabra") {
-        num = 1
+    if (po ==":Todo") {
+        num=1
+    }else if(po==":Palabra"){
+        num=2
     }else if(po==":Numero de acuerdo"){
-        num = 2
+        num=3
     }else if(po==":Fecha del acuerdo"){
-        num = 3
+        num=4
     }else{
-        num= 0
+        num=0
     }
     if(num != 0){
                 console.log("entro")
@@ -192,7 +180,7 @@ ACController.searchForm = (req, res, next) => {
             }
         })
     }
-    console.log("sr= " + sr + " po= " + po + "search= "+ search)
+    console.log("sr= " + sr + " po= " + po + " search= "+ search)
     let locals = {
         title: 'Buscar Acuerdo Municipal',
         op: 'search',

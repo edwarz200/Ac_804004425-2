@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 const Ac_Schema = new Schema({
     acuerdo_id: { type: String, required: true },
     nro_acuerdo: { type: String, required: true },
-    fecha: { type: String, require: true },
+    fecha: { type: Date, require: true },
     detalle: { type: String, require: true },
     date_ag: { type: String, default: Date.now }
 })
