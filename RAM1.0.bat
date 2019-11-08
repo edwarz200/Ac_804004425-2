@@ -1,5 +1,4 @@
 @echo off
-call InsForever.bat
-@echo off
-call InitApp.bat
-Start http://localhost:3000/
+call Mongod_oculto.VBS
+Start http://localhost:2000/
+call InitAppSupervisor.bat

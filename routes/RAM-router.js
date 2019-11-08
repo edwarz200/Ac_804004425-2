@@ -5,8 +5,8 @@ var ACController = require('../controllers/RAM-controller'),
     router = express.Router()
 router
     .get('/', ACController.getAll)
-    .get('/C_R:CoR', ACController.close_reset)
-    .get('/S_E:value', ACController.getAll)
+    .get('/C_R:CoRoS', ACController.close_reset_sync)
+    .get('/S_U_E:value', ACController.getAll)
     .get('/agregar:cant', ACController.addForm)
     .get('/search/SR:value_search', ACController.searchForm)
     .post('/save', ACController.push)

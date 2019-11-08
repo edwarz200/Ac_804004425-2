@@ -4,7 +4,7 @@ window.onload = () => {
         sync = document.getElementById("sync"),
         syncInput = document.getElementById("syncInput")
     lista.onchange = () => {
-        redirect("S_E", lista.value)
+        redirect("S_U_E", lista.value)
     }
     lista2.onchange = () => {
         redirect("C_R", lista2.value)
@@ -46,12 +46,11 @@ $("#inputSearch").keypress(function(event) {
 
 // }
 
-function myfun(h_d, h, e, s) {
+function myfun(h_d, h, e, s, b) {
     var select = 0,
         selectS = 0,
         inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
-        List_search = document.querySelector("#List_search"),
-        sync = document.getElementById("sync")
+        List_search = document.getElementById("#List_search")
     if (h_d == "false") {
         $(".disable").removeAttr('disabled')
         select = 1

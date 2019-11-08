@@ -23,7 +23,9 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.text-light.mb-3
       input#searchlista(type="hidden",value="#{input}")
       input#syncInput(type="hidden",value="#{sync}")
     select.dropdown.btn.btn-secondary.dropdown-toggle.float-left(title="Servidor local", name="C_R", id="C_R",)
-          option.dropdown-item.text-light(value="") Opciones del servidor
+          option.dropdown-item.text-light(value="#") Opciones adicionales
+          option.dropdown-item.text-light(value="Firebase") Ver datos de la nube 
+          option.dropdown-item.text-light(value="", disabled) Servidor
           option.dropdown-item.text-light(value="Close") Cerrar servidor
           option.dropdown-item.text-light(value="Restart") Reiniciar Servidor
 div.d-none
