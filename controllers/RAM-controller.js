@@ -54,20 +54,20 @@ ACController.update = (req, res, next) => {
 }
 
 ACController.getAll = (req, res, next) => {
-   let H_D = req.params.value,
+    let H_D = req.params.value,
         savee = req.params.guardado,
         childKey = "no paso",
-        c,save,num=0
-    ACModel.getAll((err,rows) => {
-        if(err){
+        c, save, num = 0
+    ACModel.getAll((err, rows) => {
+        if (err) {
             let locals = {
                 title: `Error al obtener los datos`,
                 description: "Error de Sintaxis",
                 error: err
             }
             res.render('error', locals)
-        }else{
-            ACModel.sync()
+        } else {
+            // ACModel.sync()
             // var childKey = {},
             //     rows, isss = 0
             // snapshot.forEach(function(childSnapshot) {
@@ -83,10 +83,13 @@ ACController.getAll = (req, res, next) => {
             } else if (H_D == ":actualizado") {
                 save = "Acuerdo actualizado con exito"
                 num = 2
+            } else if (H_D == ":sincro") {
+                save = "Base de datos sincronizada con exito"
+                num = 2
             }
-            if (String(H_D).indexOf(":Habilitar")!=-1) {
+            if (String(H_D).indexOf(":Habilitar") != -1) {
                 c = 'false'
-                if (H_D == ":Habilitar2") 
+                if (H_D == ":Habilitar2")
                     save = "Acuerdo eliminado con exito"
             } else if (H_D == ":Varios") {
                 c = 'false_v'
@@ -104,29 +107,43 @@ ACController.getAll = (req, res, next) => {
         }
     })
 }
+
 ACController.close_reset_sync = (req, res, next) => {
     let closeORreset = req.params.CoRoS,
-        id,num=1
+        id, num = 1
 
     if (closeORreset == ":Close") {
         id = "Close"
-        num=1
+        num = 1
     } else if (closeORreset == ":Restart") {
         id = "Restart"
-        num=1
-    }else if(closeORreset == ":Firebase"){
-        num=0
+        num = 1
+    } else if (closeORreset == ":Firebase") {
+        num = 0
+    } else if (closeORreset == ":Syncfirebase") {
+        num = 2
     }
-    if(num==1){
+    if (num == 1) {
         ACModel.close_reset(id, (err, stdout, stderr) => {
             // return (err) ? console.log(`Archivo no encontrado ${err.stack}`) : console.log(`Archivo encontrado: stdout ${stdout}, stderr ${stderr} `)
         })
         res.redirect('/')
-    }else{
+    } else if (num == 2) {
+        console.log('entroooooooo')
+        ACModel.SyncMongo((err, cc) => {
+                if (err) {
+                    console.log('error ' + err)
+                } else {
+                    console.log('guardado')
+                    res.redirect('/S_U_E:sincro')
+                }
+            })
+            // res.redirect('/')
+    } else {
         let H_D = "no",
             save,
             childKey = "no paso",
-            c="no"
+            c = "no"
         ACModel.getAllFirebase(snapshot => {
             var childKey = {},
                 rows, isss = 0
@@ -136,7 +153,8 @@ ACController.close_reset_sync = (req, res, next) => {
             });
             if (H_D == ":Habilitar") {
                 c = 'false'
-            }if (H_D == ":Habilitar2") {
+            }
+            if (H_D == ":Habilitar2") {
                 c = 'false'
                 save = "Acuerdo eliminado con exito"
             } else if (H_D == ":Varios") {
@@ -152,7 +170,7 @@ ACController.close_reset_sync = (req, res, next) => {
             }
             console.log(locals)
             res.render('index_firebase', locals)
-       })
+        })
     }
 }
 
@@ -196,7 +214,7 @@ ACController.addForm = (req, res, next) => {
             for (var j = 0; j < 3; j++) {
                 m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
             }
-            rows.forEach((ram)=>{
+            rows.forEach((ram) => {
                 while (m_id == ram.acuerdo_id) {
                     for (var k = 0; k < 1; k++) {
                         m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
@@ -218,32 +236,33 @@ ACController.addForm = (req, res, next) => {
 ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
         search = "",
-        po = "",num
+        po = "",
+        num
     if (sr != ":") {
         var arrayDeCadenas = sr.split("=")
         search = arrayDeCadenas[arrayDeCadenas.length - 1]
         po = arrayDeCadenas[0]
     }
-    if (po ==":Todo") {
-        num=1
-    }else if(po==":Palabra"){
-        num=2
-    }else if(po==":Numero de acuerdo"){
-        num=3
-    }else if(po==":Fecha del acuerdo"){
-        num=4
-    }else{
-        num=0
+    if (po == ":Todo") {
+        num = 1
+    } else if (po == ":Palabra") {
+        num = 2
+    } else if (po == ":Numero de acuerdo") {
+        num = 3
+    } else if (po == ":Fecha del acuerdo") {
+        num = 4
+    } else {
+        num = 0
     }
-    if(num != 0){
-                console.log("entro")
-        ACModel.search(num,search,async (err, bb) => {
-            for(var i = 0; i<bb.length ; i++){
+    if (num != 0) {
+        console.log("entro")
+        ACModel.search(num, search, async(err, bb) => {
+            for (var i = 0; i < bb.length; i++) {
                 console.log(bb[i])
             }
         })
     }
-    console.log("sr= " + sr + " po= " + po + " search= "+ search)
+    console.log("sr= " + sr + " po= " + po + " search= " + search)
     let locals = {
         title: 'Buscar Acuerdo Municipal',
         op: 'search',

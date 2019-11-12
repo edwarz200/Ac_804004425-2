@@ -13,7 +13,7 @@ var conn = require('./RAM-connection'),
 
 
 ACModel.getAll = (cb) => {
-    db.find(cb).sort({fecha: 1, nro_acuerdo: 1} )
+    db.find(cb).sort({ fecha: 1, nro_acuerdo: 1 })
         // conn.ref('RAM/').once('value', cb)
 }
 
@@ -33,51 +33,53 @@ ACModel.sync = () => {
                     childSnapshot, isss = 0,
                     iss = 0
                 c.forEach(function(cc) {
-                    let numsnapshot = 0,num = 0,cont = 0,
-                    id = cc.acuerdo_id
+                    let numsnapshot = 0,
+                        num = 0,
+                        cont = 0,
+                        id = cc.acuerdo_id
                     nro_acuerdo = cc.nro_acuerdo
                     fecha = cc.fecha
                     detalle = cc.detalle
                     data = { nro_acuerdo, fecha, detalle }
-                    if(snapshot.exists()){
+                    if (snapshot.exists()) {
                         snapshot.forEach((childSnapshot) => {
                             var vuelta = "vuelta numero " + num
-                            // console.log(childSnapshot.key)
+                                // console.log(childSnapshot.key)
                             console.log(vuelta)
                             childKey[isss] = childSnapshot.key
-                                childSnapshot = snapshot.val()
-                                    // childKey.objectID = childKey
-                                if (childKey[isss] == id) {
-                                    var updates = {}
-                                    updates['/RAM/' + id] = data
-                                    conn.ref().update(updates, (err) => {
-                                        if (err) {
-                                            console.log(err)
-                                        } else {
-                                            console.log("actualizado")
-                                        }
-                                    })
-                                    console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
-                                    numsnapshot = 1
-                                }
+                            childSnapshot = snapshot.val()
+                                // childKey.objectID = childKey
+                            if (childKey[isss] == id) {
+                                var updates = {}
+                                updates['/RAM/' + id] = data
+                                conn.ref().update(updates, (err) => {
+                                    if (err) {
+                                        console.log(err)
+                                    } else {
+                                        console.log("actualizado")
+                                    }
+                                })
+                                console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
+                                numsnapshot = 1
+                            }
                             num++
                         });
                         console.log(num)
-                            if(numsnapshot == 0){
-                                conn.ref('RAM').child(id).set(data, async(err) => {
-                                    if (err) {
-                                        console.log('error al guardar el dato con el id: ' + id + ' en la nube')
-                                    } else {
-                                        console.log('exito')
-                                    }
-                                    numsnapshot = 2
-                                    console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
-                                })
-                            }
-                            console.log(numsnapshot)
-                            if(numsnapshot == 0 ){
-                                    console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
-                            }
+                        if (numsnapshot == 0) {
+                            conn.ref('RAM').child(id).set(data, async(err) => {
+                                if (err) {
+                                    console.log('error al guardar el dato con el id: ' + id + ' en la nube')
+                                } else {
+                                    console.log('exito')
+                                }
+                                numsnapshot = 2
+                                console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
+                            })
+                        }
+                        console.log(numsnapshot)
+                        if (numsnapshot == 0) {
+                            console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
+                        }
                         // }
                         isss++
                     } else {
@@ -86,7 +88,7 @@ ACModel.sync = () => {
                                 console.log('error al guardar el dato con el id: ' + id + ' en la nube')
                             } else {
                                 console.log('La base de datos estaba vacia')
-                                console.log('Contacto guardado con el id '+ id)
+                                console.log('Contacto guardado con el id ' + id)
                             }
                         })
 
@@ -96,78 +98,124 @@ ACModel.sync = () => {
             }
             // }
         }, function(error) {
-                console.log('no entro error'+error);
+            console.log('no entro error' + error);
         })
     })
 }
 
-// ACModel.syncMongo = () => {
-//     conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
-//         // if (err) {
-//         //     console.log(err)
-//         // } else {
-//         var id, nro_acuerdo, fecha, detalle, data
-//         db.find((err, c) => {
-//                 if (err) {
-//                     // console.log(err)
-//                 } else {
-//                     console.log('entro')
-//                     var childKey = {},
-//                         childSnapshot, isss = 0,
-//                         iss = 0
-//                     snapshot.forEach(function(childSnapshot) {
-//                         childKey[isss] = childSnapshot.key
-//                         childSnapshot = snapshot.val()
-//                             // childKey.objectID = childKey
-//                         c.forEach(function(cc) {
-//                             id = cc.acuerdo_id
-//                             nro_acuerdo = cc.nro_acuerdo
-//                             fecha = cc.fecha
-//                             detalle = cc.detalle
-//                             data = { nro_acuerdo, fecha, detalle }
-//                             if (childKey[isss] == cc.acuerdo_id) {
-//                                 var updates = {}
-//                                 updates['/RAM/' + id] = data
-//                                 conn.ref().update(updates, (err) => {
-//                                     if (err) {
-//                                         console.log(err)
-//                                     } else {
-//                                         console.log("actualizado")
-//                                     }
-//                                 })
-//                                 console.log('entr00000o', childKey[isss], " cccccccc", cc.acuerdo_id)
-//                             } else {
-//                                 conn.ref('RAM').child(id).set(data, async(err) => {
-//                                     if (err) {
-//                                         console.log('error al guardar el dato con el id: ' + id + ' en la nube')
-//                                     } else {
-//                                         console.log('exito')
-//                                     }
-//                                 })
-//                                 console.log('no', childKey[isss], '  odsmosmdso', cc.acuerdo_id)
+ACModel.SyncMongo = (cb) => {
+    conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
+        var id, nro_acuerdo, fecha, detalle, data
+        db.find((err, cc) => {
+            if (err) {
+                console.log(err)
+            } else {
+                // 
+                var childKey = {},
+                    childSnapshot, isss = 0,
+                    iss = 0,
+                    numsnapshot = 0
+                console.log(cc.length)
+                if (cc.length != 0) {
+                    if (snapshot.exists()) {
+                        contador_de_hijos = snapshot.numChildren()
+                        let num = 0
+                        snapshot.forEach((childSnapshot) => {
+                            childKey[iss] = childSnapshot.key
+                                // childSnapshot = snapshot.val()
+                            let childss = childSnapshot.val(),
+                                acuerdo_id = childKey[iss],
+                                nro_acuerdo = childss.nro_acuerdo,
+                                fecha = childss.fecha,
+                                detalle = childss.detalle,
+                                data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                            cc.forEach(function(c) {
+                                var vuelta = "vuelta numero " + num
+                                    // console.log(childSnapshot.key)
+                                console.log(vuelta)
+                                    // childKey.objectID = childKey
+                                if (acuerdo_id == c.acuerdo_id) {
+                                    db.findOneAndUpdate({ acuerdo_id: c.acuerdo_id }, data, (err, bb) => {
+                                        if (err) {
+                                            console.log('error ' + err)
+                                        } else {
+                                            console.log('actualizado ' + c.acuerdo_id)
+                                        }
+                                    })
+                                    console.log('actualizado', childKey[isss], '  odsmosmdso', c.acuerdo_id)
+                                    numsnapshot = 1
+                                }
+                                num++
+                            });
+                            console.log(num)
+                            if (numsnapshot == 0) {
+                                const newAc = new db(data)
+                                newAc.save((err, bb) => {
+                                    if (err) {
+                                        console.log('error ' + err)
+                                    } else {
+                                        console.log('guardado ' + bb.acuerdo_id)
+                                    }
+                                    console.log('no', childKey[iss], '  odsmosmdso', bb.acuerdo_id)
+                                })
+                            }
+                        })
+                        if (num >= contador_de_hijos) {
+                            console.log('entro')
+                            db.find(cb)
+                        }
+                        iss++
+                    }
+                    // 
+                } else {
+                    if (snapshot.exists()) {
+                        var num = 0,
+                            child = {},
+                            contador_de_hijos = snapshot.numChildren()
+                        snapshot.forEach((childSnapshot) => {
+                            // console.log('enttttttrrrrrooo')
+                            var vuelta = "vuelta numero " + num
+                                // console.log(childSnapshot.key)
+                                // console.log(vuelta)
+                            childKey[num] = childSnapshot.key
+                            let childss = childSnapshot.val(),
+                                acuerdo_id = childKey[num],
+                                nro_acuerdo = childss.nro_acuerdo,
+                                fecha = childss.fecha,
+                                detalle = childss.detalle,
+                                data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                                // child = childKey[num] + childss
+                                // childKey.objectID = childKey
+                                // console.log('guardado', acuerdo_id)
+                            const newAc = new db(data)
+                            newAc.save()
+                            num++
+                        })
+                        console.log(contador_de_hijos)
+                        if (num >= contador_de_hijos) {
+                            console.log('entro')
+                            db.find(cb)
+                        }
+                        isss++
+                        console.log('entro pero paso del tema')
+                    }
+                }
+            }
+        })
+    })
+}
 
-//                             }
-//                         })
-//                         isss++
-//                     })
-//                 }
-//             })
-//             // }
-//     })
-
-// }
-
-ACModel.search = (num,search,cb)=>{
-     // detalle: /search/
+ACModel.search = (num, search, cb) => {
+    // detalle: /search/
     const Regex = new RegExp(search, 'i')
-    if(num == 1){
-       db.find({ $or: [{nro_acuerdo: Regex} ,{fecha: Regex},{detalle: Regex}]},cb)
-    }else if(num == 2){
-       db.find({ detalle: Regex}).exec(cb)
-    }else if(num == 3){
-       db.find({ nro_acuerdo: Regex}).exec(cb)
-    }else if(num == 4){
-       db.find({ fecha: Regex}).exec(cb)
+    if (num == 1) {
+        db.find({ $or: [{ nro_acuerdo: Regex }, { fecha: Regex }, { detalle: Regex }] }, cb)
+    } else if (num == 2) {
+        db.find({ detalle: Regex }).exec(cb)
+    } else if (num == 3) {
+        db.find({ nro_acuerdo: Regex }).exec(cb)
+    } else if (num == 4) {
+        db.find({ fecha: Regex }).exec(cb)
     }
 }
 
@@ -176,35 +224,35 @@ ACModel.getOne = (id, cb) => {
 }
 
 ACModel.push = (idmongo, id, data, cb) => {
-     db.findOne({ acuerdo_id: idmongo }).exec((err,bb)=>{
-        if(err){
-            console.log('entro al error')
-        }else{
-            if(bb==null){
-                console.log('entro al null')
-                conn.ref('RAM').child(id).set(data)
-                console.log('exito')
-                const newAc = new db(data)
-                newAc.save(cb)
-            }else{
-                console.log('no entro al null')
-                var updates = {}
-                updates['/RAM/' + idmongo] = data
-                conn.ref().update(updates)
-                console.log('actualizado')
-                db.findByIdAndUpdate(id, data, cb)
+    db.findOne({ acuerdo_id: idmongo }).exec((err, bb) => {
+            if (err) {
+                console.log('entro al error')
+            } else {
+                if (bb == null) {
+                    console.log('entro al null')
+                    conn.ref('RAM').child(id).set(data)
+                    console.log('exito')
+                    const newAc = new db(data)
+                    newAc.save(cb)
+                } else {
+                    console.log('no entro al null')
+                    var updates = {}
+                    updates['/RAM/' + idmongo] = data
+                    conn.ref().update(updates)
+                    console.log('actualizado')
+                    db.findByIdAndUpdate(id, data, cb)
+                }
             }
-        }
-     })
-// })
-// db.find({ acuerdo_id: idmongo }).exec(async(err, bb) => {
-//     if (err) {
-//         const newAc = new db(data)
-//         newAc.save(cb)
-//     }else{
-//          db.findByIdAndUpdate(idmongo, data, cb)
-//     }
-// });
+        })
+        // })
+        // db.find({ acuerdo_id: idmongo }).exec(async(err, bb) => {
+        //     if (err) {
+        //         const newAc = new db(data)
+        //         newAc.save(cb)
+        //     }else{
+        //          db.findByIdAndUpdate(idmongo, data, cb)
+        //     }
+        // });
 }
 
 ACModel.delete = (idmongo, id, cb) => {
