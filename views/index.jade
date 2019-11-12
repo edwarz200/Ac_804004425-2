@@ -3,6 +3,8 @@ extends layout
 block content
 	section.c-95
 		include alerts
+		div#contenedor
+			include add
 		include header
 		article.item
 			-if(data!="")
@@ -15,7 +17,8 @@ block content
 						th.col-5(scope="col") Detalle
 						th.col-2(scope="col", colspan="2",style="display:block")
 							div.input-group
-								include add_cant
+								input#add.btn.btn-block.btn-success(onclick="agregar()",type="button", value="Agregar", title="Agregar acuerdos")
+								// input#add.btn.btn-block.btn-success(onclick="on('/agregar:true')",type="button", value="Agregar", title="Agregar acuerdos")
 					//-var cont=0
 					-each ac in data
 						// -console.log()
@@ -51,12 +54,13 @@ block content
 							th(scope="col") Detalle
 							th(scope="col", colspan="2")
 								div.input-group
-									include add_cant
+									input#add.btn.btn-block.btn-success(onclick="on('/agregar:true')",type="button", value="Agregar", title="Agregar acuerdos")
 							tr
 								th.no_selection.text-black-50(scope="row") Sin informacion
 								td.no_selection.text-black-50 Sin informacion
 								td.no_selection.text-black-50 Sin informacion
 								td.no_selection.text-black-50 Sin informacion 
 								td.no_selection
+				a#btnsync.button.btn.btn-info.btn-block(href="/C_R:Firebase") Sincronizar con la nube
 								
 	include footer

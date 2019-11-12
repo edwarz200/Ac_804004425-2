@@ -45,12 +45,16 @@ $("#inputSearch").keypress(function(event) {
 
 
 // }
+function agregar(){
+    
+}
 
 function myfun(h_d, h, e, s, b) {
     var select = 0,
         selectS = 0,
         inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
-        List_search = document.getElementById("#List_search")
+        List_search = document.getElementById("List_search"),
+        btnsync = document.getElementById("btnsync")
     if (h_d == "false") {
         $(".disable").removeAttr('disabled')
         select = 1
@@ -84,6 +88,15 @@ function myfun(h_d, h, e, s, b) {
         selectS = 2
     } else if (s == ":Fecha del acuerdo") {
         selectS = 3
+    }
+    if(b == "si"){
+
+    }else if(b=="no"){
+        btnsync.classList.remove('btn-info')
+        btnsync.classList.add('btn-secondary')
+        btnsync.classList.add('btn-lg')
+        btnsync.classList.add('disabled')
+        btnsync.innerHTML = "La base de datos en la nube esta vacia"
     }
     if (List_search != null)
         List_search.options.item(selectS).setAttribute('selected', false)

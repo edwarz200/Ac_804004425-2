@@ -67,43 +67,45 @@ ACController.getAll = (req, res, next) => {
             }
             res.render('error', locals)
         } else {
-            // ACModel.sync()
-            // var childKey = {},
-            //     rows, isss = 0
-            // snapshot.forEach(function(childSnapshot) {
-            //     childKey[isss] = childSnapshot.key
-            //     rows = snapshot.val()
-            //     console.log(childKey[isss])
-            //     rows.objectID = childKey
-            //     isss++
-            // });
-            if (H_D == ":guardado") {
-                save = "Acuerdo guardado con exito"
-                num = 1
-            } else if (H_D == ":actualizado") {
-                save = "Acuerdo actualizado con exito"
-                num = 2
-            } else if (H_D == ":sincro") {
-                save = "Base de datos sincronizada con exito"
-                num = 2
-            }
-            if (String(H_D).indexOf(":Habilitar") != -1) {
-                c = 'false'
-                if (H_D == ":Habilitar2")
-                    save = "Acuerdo eliminado con exito"
-            } else if (H_D == ":Varios") {
-                c = 'false_v'
-            } else {
-                c = 'true_defect'
-            }
-            let locals = {
-                title: 'Acuerdos Municipales',
-                disables: c,
-                data: rows,
-                data_save: save,
-                buttons: 'si'
-            }
-            res.render('index', locals)
+            ACModel.getAllFirebase(snapshot =>{
+                if (H_D == ":guardado") {
+                    save = "Acuerdo guardado con exito"
+                    num = 1
+                } else if (H_D == ":actualizado") {
+                    save = "Acuerdo actualizado con exito"
+                    num = 2
+                } else if (H_D == ":sincro") {
+                    save = "Base de datos sincronizada con exito"
+                    num = 2
+                }
+                if (String(H_D).indexOf(":Habilitar") != -1) {
+                    c = 'false'
+                    if (H_D == ":Habilitar2")
+                        save = "Acuerdo eliminado con exito"
+                } else if (H_D == ":Varios") {
+                    c = 'false_v'
+                } else {
+                    c = 'true_defect'
+                }
+                if(snapshot.exists()){
+                    var locals = {
+                        title: 'Acuerdos Municipales',
+                        disables: c,
+                        data: rows,
+                        data_save: save,
+                        buttons: 'si'
+                    }
+                }else{
+                    var locals = {
+                        title: 'Acuerdos Municipales',
+                        disables: c,
+                        data: rows,
+                        data_save: save,
+                        buttons: 'no'
+                    }
+                }
+                    res.render('index', locals)
+            })
         }
     })
 }
@@ -121,6 +123,8 @@ ACController.close_reset_sync = (req, res, next) => {
     } else if (closeORreset == ":Firebase") {
         num = 0
     } else if (closeORreset == ":Syncfirebase") {
+        num = 2
+    } else if (closeORreset == ":SyncMongo") {
         num = 2
     }
     if (num == 1) {

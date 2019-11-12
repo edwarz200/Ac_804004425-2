@@ -22,9 +22,10 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.text-light.mb-3
       input#nums(type="hidden", value="#{nums}")
       input#searchlista(type="hidden",value="#{input}")
       input#syncInput(type="hidden",value="#{sync}")
+      input#buttons(type="hidden",value="#{buttons}")
     select.dropdown.btn.btn-secondary.dropdown-toggle.float-left(title="Servidor local", name="C_R", id="C_R",)
           option.dropdown-item.text-light(value="#") Opciones adicionales
-          option.dropdown-item.text-light(value="Syncfirebase")  Sincronizar con firebaze
+          option.dropdown-item.text-light(value="Syncfirebase") Sincronizar con firebase
           option.dropdown-item.text-light(value="Firebase") Ver datos de la nube 
           option.dropdown-item.text-light(value="", disabled) Servidor
           option.dropdown-item.text-light(value="Close") Cerrar servidor

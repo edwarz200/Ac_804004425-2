@@ -22,7 +22,7 @@ ACModel.getAllFirebase = (cb) => {
     conn.ref('RAM/').once('value', cb)
 }
 
-ACModel.sync = () => {
+ACModel.sync = (numsnao,cb) => {
     conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
         var id, nro_acuerdo, fecha, detalle, data
         db.find((err, c) => {
@@ -42,7 +42,7 @@ ACModel.sync = () => {
                     detalle = cc.detalle
                     data = { nro_acuerdo, fecha, detalle }
                     if (snapshot.exists()) {
-                        snapshot.forEach((childSnapshot) => {
+                        snapshot.some((childSnapshot) => {
                             var vuelta = "vuelta numero " + num
                                 // console.log(childSnapshot.key)
                             console.log(vuelta)
@@ -61,9 +61,11 @@ ACModel.sync = () => {
                                 })
                                 console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
                                 numsnapshot = 1
+                                return true
                             }
                             num++
                         });
+                        numsnao++
                         console.log(num)
                         if (numsnapshot == 0) {
                             conn.ref('RAM').child(id).set(data, async(err) => {
@@ -76,10 +78,10 @@ ACModel.sync = () => {
                                 console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
                             })
                         }
-                        console.log(numsnapshot)
-                        if (numsnapshot == 0) {
-                            console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
-                        }
+                        // console.log(numsnapshot)
+                        // if (numsnapshot == 0) {
+                        //     console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
+                        // }
                         // }
                         isss++
                     } else {
@@ -95,6 +97,12 @@ ACModel.sync = () => {
                     }
 
                 });
+                console.log(cc.length)
+                if (numsnao >= cc.length) {
+                    console.log('entro')
+                    db.find(cb)
+                }
+                iss++
             }
             // }
         }, function(error) {
@@ -109,97 +117,179 @@ ACModel.SyncMongo = (cb) => {
         db.find((err, cc) => {
             if (err) {
                 console.log(err)
-            } else {
-                // 
+            } else if (cc.length != 0 && snapshot.exists()) {
+                contador_de_hijos = snapshot.numChildren()
+                let ccc = cc.length
+                // while(contador_de_hijos<ccc||contador_de_hijos>ccc){
+                console.log('contador_de_hijos = ' + contador_de_hijos)
+                console.log('cc.length = ' + cc.length )
                 var childKey = {},
                     childSnapshot, isss = 0,
                     iss = 0,
-                    numsnapshot = 0
-                console.log(cc.length)
-                if (cc.length != 0) {
-                    if (snapshot.exists()) {
-                        contador_de_hijos = snapshot.numChildren()
-                        let num = 0
-                        snapshot.forEach((childSnapshot) => {
-                            childKey[iss] = childSnapshot.key
-                                // childSnapshot = snapshot.val()
-                            let childss = childSnapshot.val(),
-                                acuerdo_id = childKey[iss],
-                                nro_acuerdo = childss.nro_acuerdo,
-                                fecha = childss.fecha,
-                                detalle = childss.detalle,
-                                data = { acuerdo_id, nro_acuerdo, fecha, detalle }
-                            cc.forEach(function(c) {
+                    numsnapshot = 0,
+                    numsnao = 0
+                if(contador_de_hijos<=cc.length){
+                    var childKey = {},
+                        childSnapshot, isss = 0,
+                        iss = 0
+                    cc.forEach((c) => {
+                        let numsnapshot = 0,
+                            num = 0,
+                            cont = 0,
+                            id = c.acuerdo_id,
+                            nro_acuerdo = c.nro_acuerdo,
+                            fecha = c.fecha,
+                            detalle = c.detalle,
+                            data = { acuerdo_id: id, nro_acuerdo, fecha, detalle }
+                            snapshot.forEach((childSnapshot) => {
                                 var vuelta = "vuelta numero " + num
                                     // console.log(childSnapshot.key)
                                 console.log(vuelta)
+                                childKey[isss] = childSnapshot.key
+                                childSnapshot = snapshot.val()
                                     // childKey.objectID = childKey
-                                if (acuerdo_id == c.acuerdo_id) {
-                                    db.findOneAndUpdate({ acuerdo_id: c.acuerdo_id }, data, (err, bb) => {
+                                if (childKey[isss] == id) {
+                                    var updates = {}
+                                    updates['/RAM/' + id] = data
+                                    conn.ref().update(updates, (err) => {
                                         if (err) {
-                                            console.log('error ' + err)
+                                            console.log(err)
                                         } else {
-                                            console.log('actualizado ' + c.acuerdo_id)
+                                            console.log("actualizado")
                                         }
                                     })
-                                    console.log('actualizado', childKey[isss], '  odsmosmdso', c.acuerdo_id)
+                                    console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
                                     numsnapshot = 1
+                                    return true
                                 }
                                 num++
                             });
+                            numsnao++
                             console.log(num)
                             if (numsnapshot == 0) {
-                                const newAc = new db(data)
-                                newAc.save((err, bb) => {
+                                conn.ref('RAM').child(id).set(data, async(err) => {
+                                    if (err) {
+                                        console.log('error al guardar el dato con el id: ' + id + ' en la nube')
+                                    } else {
+                                        console.log('exito')
+                                    }
+                                    numsnapshot = 2
+                                    console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
+                                })
+                            }
+                            // console.log(numsnapshot)
+                            // if (numsnapshot == 0) {
+                            //     console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
+                            // }
+                            // }
+                            isss++
+
+                    });
+                    console.log(cc.length)
+                    if (numsnao >= cc.length) {
+                        console.log('entro')
+                        db.find(cb)
+                    }
+                    iss++
+                }
+                if(contador_de_hijos>cc.length){
+                    snapshot.forEach((childSnapshot) => {
+                        childKey[iss] = childSnapshot.key
+                        let num = 0,
+                            childss = childSnapshot.val(),
+                            acuerdo_id = childKey[iss],
+                            nro_acuerdo = childss.nro_acuerdo,
+                            fecha = childss.fecha,
+                            detalle = childss.detalle,
+                            data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                            // childSnapshot = snapshot.val()
+                        cc.some((c) => {
+                            var vuelta = "vuelta numero " + num
+                                // console.log(childSnapshot.key)
+                            console.log(vuelta)
+                                // childKey.objectID = childKey
+                            if (acuerdo_id == c.acuerdo_id) {
+                                db.findOneAndUpdate({ acuerdo_id: c.acuerdo_id }, data, (err, bb) => {
                                     if (err) {
                                         console.log('error ' + err)
                                     } else {
-                                        console.log('guardado ' + bb.acuerdo_id)
+                                        console.log('actualizado ' + c.acuerdo_id)
                                     }
-                                    console.log('no', childKey[iss], '  odsmosmdso', bb.acuerdo_id)
                                 })
+                                console.log('actualizado', childKey[isss], '  odsmosmdso', c.acuerdo_id)
+                                numsnapshot = 1
+                                return true;
                             }
-                        })
-                        if (num >= contador_de_hijos) {
-                            console.log('entro')
-                            db.find(cb)
-                        }
-                        iss++
-                    }
-                    // 
-                } else {
-                    if (snapshot.exists()) {
-                        var num = 0,
-                            child = {},
-                            contador_de_hijos = snapshot.numChildren()
-                        snapshot.forEach((childSnapshot) => {
-                            // console.log('enttttttrrrrrooo')
-                            var vuelta = "vuelta numero " + num
-                                // console.log(childSnapshot.key)
-                                // console.log(vuelta)
-                            childKey[num] = childSnapshot.key
-                            let childss = childSnapshot.val(),
-                                acuerdo_id = childKey[num],
-                                nro_acuerdo = childss.nro_acuerdo,
-                                fecha = childss.fecha,
-                                detalle = childss.detalle,
-                                data = { acuerdo_id, nro_acuerdo, fecha, detalle }
-                                // child = childKey[num] + childss
-                                // childKey.objectID = childKey
-                                // console.log('guardado', acuerdo_id)
-                            const newAc = new db(data)
-                            newAc.save()
                             num++
-                        })
-                        console.log(contador_de_hijos)
-                        if (num >= contador_de_hijos) {
-                            console.log('entro')
-                            db.find(cb)
+                            
+                            // console.log('cc'+c)
+                        });
+                        numsnao++
+
+                        console.log(num)
+                        if (numsnapshot == 0) {
+                            const newAc = new db(data)
+                            newAc.save((err, bb) => {
+                                if (err) {
+                                    console.log('error ' + err)
+                                } else {
+                                    console.log('guardado ' + bb.acuerdo_id)
+                                }
+                                console.log('no', childKey[iss], '  odsmosmdso', bb.acuerdo_id)
+                            })
                         }
-                        isss++
-                        console.log('entro pero paso del tema')
+                    })
+                    console.log(contador_de_hijos)
+                    if (numsnao >= contador_de_hijos) {
+                        console.log('entro')
+                        db.find(cb)
                     }
+                    iss++
                 }
+                contador_de_hijos = snapshot.numChildren()
+                ccc = cc.length
+                // }
+                // 
+            } else if (snapshot.exists()) {
+                var num = 0,
+                    child = {},
+                    contador_de_hijos = snapshot.numChildren()
+                snapshot.forEach((childSnapshot) => {
+                    // console.log('enttttttrrrrrooo')
+                    var vuelta = "vuelta numero " + num
+                        // console.log(childSnapshot.key)
+                        // console.log(vuelta)
+                    childKey[num] = childSnapshot.key
+                    let childss = childSnapshot.val(),
+                        acuerdo_id = childKey[num],
+                        nro_acuerdo = childss.nro_acuerdo,
+                        fecha = childss.fecha,
+                        detalle = childss.detalle,
+                        data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                        // child = childKey[num] + childss
+                        // childKey.objectID = childKey
+                        // console.log('guardado', acuerdo_id)
+                    const newAc = new db(data)
+                    newAc.save()
+                    num++
+                })
+                console.log(contador_de_hijos)
+                if (num >= contador_de_hijos) {
+                    console.log('entro')
+                    db.find(cb)
+                }
+                isss++
+                console.log('entro pero paso del tema')
+            } else {
+                conn.ref('RAM').child(id).set(data, async(err) => {
+                    if (err) {
+                        console.log('error al guardar el dato con el id: ' + id + ' en la nube')
+                    } else {
+                        console.log('La base de datos estaba vacia')
+                        console.log('Contacto guardado con el id ' + id)
+                    }
+                })
+
             }
         })
     })

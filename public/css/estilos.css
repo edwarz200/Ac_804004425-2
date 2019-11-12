@@ -55,6 +55,10 @@
     transform: translate(0);
 }
 
+#contenedor{
+    height: 0;
+    overflow: hidden;
+}
 
 /* html { background-color: #1D1D1D; }
 
