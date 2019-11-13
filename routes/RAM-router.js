@@ -7,7 +7,6 @@ router
     .get('/', ACController.getAll)
     .get('/C_R:CoRoS', ACController.close_reset_sync)
     .get('/S_U_E:value', ACController.getAll)
-    .get('/agregar:cant', ACController.addForm)
     .get('/search/SR:value_search', ACController.searchForm)
     .post('/save', ACController.push)
     // .get('/save:guardado', ACController.getAll)

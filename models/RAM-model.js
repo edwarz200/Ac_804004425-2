@@ -10,7 +10,9 @@ var conn = require('./RAM-connection'),
 // } else {
 //     console.log('aqui en otro lado')
 // }
-
+ACModel.getConection = (cb) => {
+    require('dns').resolve('www.google.com', cb);
+}
 
 ACModel.getAll = (cb) => {
     db.find(cb).sort({ fecha: 1, nro_acuerdo: 1 })
@@ -315,34 +317,25 @@ ACModel.getOne = (id, cb) => {
 
 ACModel.push = (idmongo, id, data, cb) => {
     db.findOne({ acuerdo_id: idmongo }).exec((err, bb) => {
-            if (err) {
-                console.log('entro al error')
+        if (err) {
+            console.log('entro al error')
+        } else {
+            if (bb == null) {
+                console.log('entro al null')
+                conn.ref('RAM').child(id).set(data)
+                console.log('exito')
+                const newAc = new db(data)
+                newAc.save(cb)
             } else {
-                if (bb == null) {
-                    console.log('entro al null')
-                    conn.ref('RAM').child(id).set(data)
-                    console.log('exito')
-                    const newAc = new db(data)
-                    newAc.save(cb)
-                } else {
-                    console.log('no entro al null')
-                    var updates = {}
-                    updates['/RAM/' + idmongo] = data
-                    conn.ref().update(updates)
-                    console.log('actualizado')
-                    db.findByIdAndUpdate(id, data, cb)
-                }
+                console.log('no entro al null')
+                var updates = {}
+                updates['/RAM/' + idmongo] = data
+                conn.ref().update(updates)
+                console.log('actualizado')
+                db.findByIdAndUpdate(id, data, cb)
             }
-        })
-        // })
-        // db.find({ acuerdo_id: idmongo }).exec(async(err, bb) => {
-        //     if (err) {
-        //         const newAc = new db(data)
-        //         newAc.save(cb)
-        //     }else{
-        //          db.findByIdAndUpdate(idmongo, data, cb)
-        //     }
-        // });
+        }
+    })
 }
 
 ACModel.delete = (idmongo, id, cb) => {

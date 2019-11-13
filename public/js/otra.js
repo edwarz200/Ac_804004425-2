@@ -45,11 +45,25 @@ $("#inputSearch").keypress(function(event) {
 
 
 // }
-function agregar(){
-    
+
+function eliminar(input)
+{
+    var deleteOk = confirm('¿Estás seguro de eliminar este acuerdo?')
+    return (deleteOk) ? input.parentNode.submit() : false
 }
 
-function myfun(h_d, h, e, s, b) {
+function A_C(value){
+    if(value=='agregar'){
+        document.querySelector('.contenedor').classList.remove('cont2')
+        document.querySelector('.contenedor').classList.add('cont')
+    }
+    if(value=='cancelar'){
+        document.querySelector('.contenedor').classList.add('cont2')
+        document.querySelector('.contenedor').classList.remove('cont')
+    }
+}
+
+function myfun(h_d, h, e, s, b,c) {
     var select = 0,
         selectS = 0,
         inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
@@ -97,6 +111,10 @@ function myfun(h_d, h, e, s, b) {
         btnsync.classList.add('btn-lg')
         btnsync.classList.add('disabled')
         btnsync.innerHTML = "La base de datos en la nube esta vacia"
+    }
+    if(c=="si"){
+        document.querySelector('.contenedor').classList.remove('cont2')
+        document.querySelector('.contenedor').classList.add('cont')
     }
     if (List_search != null)
         List_search.options.item(selectS).setAttribute('selected', false)

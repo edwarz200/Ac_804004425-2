@@ -1,10 +1,10 @@
 extends layout
 
 block content
+	include alerts
+	div.contenedor.bg-light.rounded-lg.border-bottom.border-top.border-light.mb-3
+		include add
 	section.c-95
-		include alerts
-		div#contenedor
-			include add
 		include header
 		article.item
 			-if(data!="")
@@ -17,8 +17,7 @@ block content
 						th.col-5(scope="col") Detalle
 						th.col-2(scope="col", colspan="2",style="display:block")
 							div.input-group
-								input#add.btn.btn-block.btn-success(onclick="agregar()",type="button", value="Agregar", title="Agregar acuerdos")
-								// input#add.btn.btn-block.btn-success(onclick="on('/agregar:true')",type="button", value="Agregar", title="Agregar acuerdos")
+								input#add.btn.btn-block.btn-success(onclick="A_C('agregar')",type="button", value="Agregar", title="Agregar acuerdos")
 					//-var cont=0
 					-each ac in data
 						// -console.log()
@@ -38,13 +37,6 @@ block content
 									input.item.i-b.v-top.ph9.p_25(id="acuerdo_id", type="hidden", value='#{ac.acuerdo_id}' name="acuerdo_id")
 									input(type="hidden", name="_method", value="DELETE")
 						//- // -cont++
-						
-				script.
-					function eliminar(input)
-					{
-						var deleteOk = confirm('¿Estás seguro de eliminar este acuerdo?')
-						return (deleteOk) ? input.parentNode.submit() : false
-					}
 			-else
 				table.table.table-striped
 						tr
@@ -54,7 +46,7 @@ block content
 							th(scope="col") Detalle
 							th(scope="col", colspan="2")
 								div.input-group
-									input#add.btn.btn-block.btn-success(onclick="on('/agregar:true')",type="button", value="Agregar", title="Agregar acuerdos")
+								input#add.btn.btn-block.btn-success(onclick="A_C('agregar')",type="button", value="Agregar", title="Agregar acuerdos")
 							tr
 								th.no_selection.text-black-50(scope="row") Sin informacion
 								td.no_selection.text-black-50 Sin informacion

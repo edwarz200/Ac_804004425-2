@@ -54,11 +54,16 @@ ACController.update = (req, res, next) => {
 }
 
 ACController.getAll = (req, res, next) => {
+    var letras_a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+        letras_A = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        cant = req.params.cant,
+        m_idarray = []
     let H_D = req.params.value,
         savee = req.params.guardado,
         childKey = "no paso",
-        c, save, num = 0
+        c, save, num = 0,cont
     ACModel.getAll((err, rows) => {
+        // navigator.onLine ? console.log('online') : console.log('offline');
         if (err) {
             let locals = {
                 title: `Error al obtener los datos`,
@@ -67,45 +72,98 @@ ACController.getAll = (req, res, next) => {
             }
             res.render('error', locals)
         } else {
-            ACModel.getAllFirebase(snapshot =>{
-                if (H_D == ":guardado") {
-                    save = "Acuerdo guardado con exito"
-                    num = 1
-                } else if (H_D == ":actualizado") {
-                    save = "Acuerdo actualizado con exito"
-                    num = 2
-                } else if (H_D == ":sincro") {
-                    save = "Base de datos sincronizada con exito"
-                    num = 2
+            for (var i = 0; i < 1; i++) {
+                // console.log('entro')
+                var m_id = "AC_"
+                for (var j = 0; j < 3; j++) {
+                    m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
                 }
-                if (String(H_D).indexOf(":Habilitar") != -1) {
-                    c = 'false'
-                    if (H_D == ":Habilitar2")
-                        save = "Acuerdo eliminado con exito"
-                } else if (H_D == ":Varios") {
-                    c = 'false_v'
-                } else {
-                    c = 'true_defect'
-                }
-                if(snapshot.exists()){
-                    var locals = {
-                        title: 'Acuerdos Municipales',
-                        disables: c,
-                        data: rows,
-                        data_save: save,
-                        buttons: 'si'
+                rows.forEach((ram) => {
+                    while (m_id == ram.acuerdo_id) {
+                        for (var k = 0; k < 1; k++) {
+                            m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
+                        }
                     }
-                }else{
-                    var locals = {
-                        title: 'Acuerdos Municipales',
-                        disables: c,
-                        data: rows,
-                        data_save: save,
-                        buttons: 'no'
+                })
+                m_idarray[i] = m_id
+            }
+            if (H_D == ":agregar") {
+                cont = 'si'
+                num = 1
+            }else if (H_D == ":guardado") {
+                save = "Acuerdo guardado con exito"
+                cont = 'si'
+                num = 1
+            } else if (H_D == ":actualizado") {
+                save = "Acuerdo actualizado con exito"
+                num = 2
+            } else if (H_D == ":sincro") {
+                save = "Base de datos sincronizada con exito"
+                num = 2
+            }
+            if (String(H_D).indexOf(":Habilitar") != -1) {
+                c = 'false'
+                if (H_D == ":Habilitar2")
+                    save = "Acuerdo eliminado con exito"
+            } else if (H_D == ":Varios") {
+                c = 'false_v'
+            } else {
+                c = 'true_defect'
+            }
+            if(rows.length <= 0){
+                ACModel.getConection( err => {
+                    if (err) {
+                        console.log("No connection");
+                        locals={
+                            title: `Error al obtener los datos`,
+                            description: "Error de conexión",
+                            errors: 'Asegurate de estar conectado a internet la primera vez que te conectas a la aplicación'
+                        }
+                        res.render('error', locals)
+                    } else {
+                        console.log("Connected");
+                        ACModel.getAllFirebase(snapshot =>{
+                            if(snapshot.exists()){
+                                var locals = {
+                                    title: 'Acuerdos Municipales',
+                                    title2: 'Agregar Acuerdo Municipal',
+                                    cont: cont,
+                                    disables: c,
+                                    data: rows,
+                                    data_save: save,
+                                    data_id: m_idarray,
+                                    buttons: 'si'
+                                }
+                            }else{
+                                var locals = {
+                                    title: 'Acuerdos Municipales',
+                                    title2: 'Agregar Acuerdo Municipal',
+                                    cont: cont,
+                                    disables: c,
+                                    data: rows,
+                                    data_save: save,
+                                    data_id: m_idarray,
+                                    buttons: 'no'
+                                }
+                            }
+                                res.render('index', locals)
+                        })
                     }
+                })
+            } else{
+                var locals = {
+                    title: 'Acuerdos Municipales',
+                    title2: 'Agregar Acuerdo Municipal',
+                    cont: cont,
+                    disables: c,
+                    data: rows,
+                    data_save: save,
+                    data_id: m_idarray,
+                    buttons: 'si'
                 }
-                    res.render('index', locals)
-            })
+                res.render('index', locals)
+
+            }
         }
     })
 }
@@ -195,47 +253,6 @@ ACController.getOne = (req, res, next) => {
         res.render('edit', locals)
     })
 }
-ACController.addForm = (req, res, next) => {
-    var letras_a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-        letras_A = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
-        cant = req.params.cant,
-        c = 0,
-        m_idarray = []
-    if (cant == ":nums=1") {
-        c = 0
-    } else if (cant == ":nums=2") {
-        c = 1
-    } else if (cant == ":nums=3") {
-        c = 2
-    } else if (cant == ":nums=4") {
-        c = 3
-    } else if (cant == ":nums=5") {
-        c = 4
-    }
-    ACModel.getAll((err, rows) => {
-        for (var i = 0; i <= c; i++) {
-            var m_id = "AC_"
-            for (var j = 0; j < 3; j++) {
-                m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
-            }
-            rows.forEach((ram) => {
-                while (m_id == ram.acuerdo_id) {
-                    for (var k = 0; k < 1; k++) {
-                        m_id += letras_a[Math.round(Math.random() * 25)] + Math.round(Math.random() * 9) + letras_A[Math.round(Math.random() * 25)]
-                    }
-                }
-            })
-            m_idarray[i] = m_id
-        }
-        var locals = {
-            title: 'Agregar Acuerdo Municipal',
-            data: m_idarray,
-            nums: c,
-            op: 'search_ag'
-        }
-        res.render('add', locals)
-    })
-}
 
 ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
@@ -258,22 +275,32 @@ ACController.searchForm = (req, res, next) => {
     } else {
         num = 0
     }
+    console.log("sr= " + sr + " po= " + po + " search= " + search)
+    let locals = {
+        title: 'Buscar Acuerdo Municipal',
+        op: 'search',
+        search: search,
+        data: '',
+        input: po
+    }
     if (num != 0) {
         console.log("entro")
         ACModel.search(num, search, async(err, bb) => {
             for (var i = 0; i < bb.length; i++) {
                 console.log(bb[i])
             }
+            let locals = {
+                title: 'Buscar Acuerdo Municipal',
+                op: 'search',
+                data: bb,
+                search: search,
+                input: po
+            }
+            res.render('search', locals)
         })
+    }else{
+        res.render('search', locals)
     }
-    console.log("sr= " + sr + " po= " + po + " search= " + search)
-    let locals = {
-        title: 'Buscar Acuerdo Municipal',
-        op: 'search',
-        search: search,
-        input: po
-    }
-    res.render('search', locals)
 
 }
 

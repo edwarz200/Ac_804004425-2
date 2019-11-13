@@ -6,7 +6,11 @@ block content
 			h1=title
 			h2=description
 			h3
-				a(href="/") Regresar
 			br
-			pre.error.left
-				code #{error.stack}
+			-if(error==undefined){
+				p= errors
+			-}else{
+				pre.error.left
+					code #{error.stack}
+			-}
+			a(href="/") Regresar
