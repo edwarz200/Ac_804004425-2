@@ -61,7 +61,8 @@ ACController.getAll = (req, res, next) => {
     let H_D = req.params.value,
         savee = req.params.guardado,
         childKey = "no paso",
-        c, save, num = 0,cont
+        c, save, num = 0,
+        cont
     ACModel.getAll((err, rows) => {
         // navigator.onLine ? console.log('online') : console.log('offline');
         if (err) {
@@ -90,7 +91,7 @@ ACController.getAll = (req, res, next) => {
             if (H_D == ":agregar") {
                 cont = 'si'
                 num = 1
-            }else if (H_D == ":guardado") {
+            } else if (H_D == ":guardado") {
                 save = "Acuerdo guardado con exito"
                 cont = 'si'
                 num = 1
@@ -110,11 +111,11 @@ ACController.getAll = (req, res, next) => {
             } else {
                 c = 'true_defect'
             }
-            if(rows.length <= 0){
-                ACModel.getConection( err => {
+            if (rows.length <= 0) {
+                ACModel.getConection(err => {
                     if (err) {
                         console.log("No connection");
-                        locals={
+                        locals = {
                             title: `Error al obtener los datos`,
                             description: "Error de conexión",
                             errors: 'Asegurate de estar conectado a internet la primera vez que te conectas a la aplicación'
@@ -122,8 +123,8 @@ ACController.getAll = (req, res, next) => {
                         res.render('error', locals)
                     } else {
                         console.log("Connected");
-                        ACModel.getAllFirebase(snapshot =>{
-                            if(snapshot.exists()){
+                        ACModel.getAllFirebase(snapshot => {
+                            if (snapshot.exists()) {
                                 var locals = {
                                     title: 'Acuerdos Municipales',
                                     title2: 'Agregar Acuerdo Municipal',
@@ -134,7 +135,7 @@ ACController.getAll = (req, res, next) => {
                                     data_id: m_idarray,
                                     buttons: 'si'
                                 }
-                            }else{
+                            } else {
                                 var locals = {
                                     title: 'Acuerdos Municipales',
                                     title2: 'Agregar Acuerdo Municipal',
@@ -146,11 +147,11 @@ ACController.getAll = (req, res, next) => {
                                     buttons: 'no'
                                 }
                             }
-                                res.render('index', locals)
+                            res.render('index', locals)
                         })
                     }
                 })
-            } else{
+            } else {
                 var locals = {
                     title: 'Acuerdos Municipales',
                     title2: 'Agregar Acuerdo Municipal',
@@ -272,6 +273,31 @@ ACController.searchForm = (req, res, next) => {
         num = 3
     } else if (po == ":Fecha del acuerdo") {
         num = 4
+        if (sr == "enero" || sr == "en" || sr == "Enero" || sr == "ENERO" || sr == "ener" || sr == "ENero") {
+
+        } else if (sr == "febrero" || sr == "feb" || sr == "Febrero" || sr == "FEBRERO" || sr == "febre" || sr == "FEb") {
+
+        } else if (sr == "marzo" || sr == "mar" || sr == "Marzo" || sr == "MARZO" || sr == "marz" || sr == "MAr") {
+
+        } else if (sr == "abril" || sr == "abr" || sr == "Abril" || sr == "ABRIL" || sr == "abri" || sr == "ABril") {
+
+        } else if (sr == "mayo" || sr == "may" || sr == "Mayo" || sr == "MAYO" || sr == "may" || sr == "MAy") {
+
+        } else if (sr == "junio" || sr == "jun" || sr == "Junio" || sr == "JUNIO" || sr == "juni" || sr == "JUnio") {
+
+        } else if (sr == "julio" || sr == "jul" || sr == "Julio" || sr == "JUlIO" || sr == "juli" || sr == "JUlio") {
+
+        } else if (sr == "agosto" || sr == "ag" || sr == "Agosto" || sr == "AGOSTO" || sr == "agos" || sr == "AGos") {
+
+        } else if (sr == "septiembre" || sr == "sept" || sr == "Septiembre" || sr == "SEPTIEMBRE" || sr == "septiem" || sr == "SEpt") {
+
+        } else if (sr == "octubre" || sr == "oct" || sr == "Octubre" || sr == "OCTUBRE" || sr == "octu" || sr == "OCtu") {
+
+        } else if (sr == "noviembre" || sr == "nov" || sr == "Noviembre" || sr == "NOVIEMBRE" || sr == "noviem" || sr == "NOvie") {
+
+        } else if (sr == "diciembre" || sr == "dic" || sr == "Diciembre" || sr == "DICIEMBRE" || sr == "diciem" || sr == "DIc") {
+
+        }
     } else {
         num = 0
     }
@@ -298,7 +324,7 @@ ACController.searchForm = (req, res, next) => {
             }
             res.render('search', locals)
         })
-    }else{
+    } else {
         res.render('search', locals)
     }
 
