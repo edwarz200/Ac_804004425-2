@@ -128,7 +128,6 @@ ACModel.SyncMongo = (cb) => {
                 var childKey = {},
                     childSnapshot, isss = 0,
                     iss = 0,
-                    numsnapshot = 0,
                     numsnao = 0
                 if(contador_de_hijos<=cc.length){
                     var childKey = {},
@@ -198,6 +197,7 @@ ACModel.SyncMongo = (cb) => {
                     snapshot.forEach((childSnapshot) => {
                         childKey[iss] = childSnapshot.key
                         let num = 0,
+                            numsnapshot = 0,
                             childss = childSnapshot.val(),
                             acuerdo_id = childKey[iss],
                             nro_acuerdo = childss.nro_acuerdo,
