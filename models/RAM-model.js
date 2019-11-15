@@ -50,7 +50,6 @@ ACModel.sync = (numsnao,cb) => {
                             console.log(vuelta)
                             childKey[isss] = childSnapshot.key
                             childSnapshot = snapshot.val()
-                                // childKey.objectID = childKey
                             if (childKey[isss] == id) {
                                 var updates = {}
                                 updates['/RAM/' + id] = data
@@ -254,14 +253,14 @@ ACModel.SyncMongo = (cb) => {
                 // 
             } else if (snapshot.exists()) {
                 var num = 0,
-                    child = {},
+                    childKey = {},
                     contador_de_hijos = snapshot.numChildren()
                 snapshot.forEach((childSnapshot) => {
                     // console.log('enttttttrrrrrooo')
                     var vuelta = "vuelta numero " + num
-                        // console.log(childSnapshot.key)
-                        // console.log(vuelta)
+                    // console.log(childSnapshot.key)
                     childKey[num] = childSnapshot.key
+                    // console.log(childKey[num])
                     let childss = childSnapshot.val(),
                         acuerdo_id = childKey[num],
                         nro_acuerdo = childss.nro_acuerdo,
@@ -272,7 +271,12 @@ ACModel.SyncMongo = (cb) => {
                         // childKey.objectID = childKey
                         // console.log('guardado', acuerdo_id)
                     const newAc = new db(data)
-                    newAc.save()
+                    newAc.save().then((bb) => {
+                        console.log('guardado ' + bb.acuerdo_id)
+                        console.log('no', childKey[num], '  odsmosmdso', bb.acuerdo_id)
+                    }).catch((err)=>{
+                        console.log('error ' + err)
+                    })
                     num++
                 })
                 console.log(contador_de_hijos)

@@ -5,12 +5,18 @@ var ACModel = require('../models/RAM-model'),
     // algolia = require('../models/RAM-Algolia'),
     ACController = () => {}
 ACController.push = (req, res, next) => {
+    var fecha = req.body.fecha
+    console.log(fecha)
     let id = req.body.acuerdo_id,
         idmongo = id,
+        miFechaPasada = new Date(fecha),
+        dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
+        dia_semana = dias[miFechaPasada.getUTCDay()],
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
             fecha: req.body.fecha,
+            dia_sem: dia_semana,
             detalle: req.body.detalle
         }
     ACModel.push(idmongo, id, AC, (err, l) => {
@@ -258,6 +264,7 @@ ACController.getOne = (req, res, next) => {
 ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
         search = "",
+        search_ant="",
         po = "",
         num
     if (sr != ":") {
@@ -267,46 +274,30 @@ ACController.searchForm = (req, res, next) => {
     }
     if (po == ":Todo") {
         num = 1
+        search_ant = search
     } else if (po == ":Palabra") {
         num = 2
-    } else if (po == ":Numero de acuerdo") {
+        search_ant = search
+    } else if (po == ":  de acuerdo") {
         num = 3
+        search_ant = search
     } else if (po == ":Fecha del acuerdo") {
         num = 4
-        if (sr == "enero" || sr == "en" || sr == "Enero" || sr == "ENERO" || sr == "ener" || sr == "ENero") {
-
-        } else if (sr == "febrero" || sr == "feb" || sr == "Febrero" || sr == "FEBRERO" || sr == "febre" || sr == "FEb") {
-
-        } else if (sr == "marzo" || sr == "mar" || sr == "Marzo" || sr == "MARZO" || sr == "marz" || sr == "MAr") {
-
-        } else if (sr == "abril" || sr == "abr" || sr == "Abril" || sr == "ABRIL" || sr == "abri" || sr == "ABril") {
-
-        } else if (sr == "mayo" || sr == "may" || sr == "Mayo" || sr == "MAYO" || sr == "may" || sr == "MAy") {
-
-        } else if (sr == "junio" || sr == "jun" || sr == "Junio" || sr == "JUNIO" || sr == "juni" || sr == "JUnio") {
-
-        } else if (sr == "julio" || sr == "jul" || sr == "Julio" || sr == "JUlIO" || sr == "juli" || sr == "JUlio") {
-
-        } else if (sr == "agosto" || sr == "ag" || sr == "Agosto" || sr == "AGOSTO" || sr == "agos" || sr == "AGos") {
-
-        } else if (sr == "septiembre" || sr == "sept" || sr == "Septiembre" || sr == "SEPTIEMBRE" || sr == "septiem" || sr == "SEpt") {
-
-        } else if (sr == "octubre" || sr == "oct" || sr == "Octubre" || sr == "OCTUBRE" || sr == "octu" || sr == "OCtu") {
-
-        } else if (sr == "noviembre" || sr == "nov" || sr == "Noviembre" || sr == "NOVIEMBRE" || sr == "noviem" || sr == "NOvie") {
-
-        } else if (sr == "diciembre" || sr == "dic" || sr == "Diciembre" || sr == "DICIEMBRE" || sr == "diciem" || sr == "DIc") {
-
-        }
+        search_ant = search
+        search = dia_sem(search)
+        console.log('search2 ' + search)
     } else {
         num = 0
+        search_ant = search
     }
-    console.log("sr= " + sr + " po= " + po + " search= " + search)
+    console.log("sr= " + sr + " po= " + po + " search= " + search_ant)
     let locals = {
         title: 'Buscar Acuerdo Municipal',
         op: 'search',
-        search: search,
+        search: search_ant,
         data: '',
+        image1: '/img/lupa_busqueda.png',
+        txt1: 'Realiza una busqueda',
         input: po
     }
     if (num != 0) {
@@ -319,7 +310,9 @@ ACController.searchForm = (req, res, next) => {
                 title: 'Buscar Acuerdo Municipal',
                 op: 'search',
                 data: bb,
-                search: search,
+                image1: '/img/no_se_encontraron.png',
+                txt1: 'No se encontro ningun resultado coincidente',
+                search: search_ant,
                 input: po
             }
             res.render('search', locals)
@@ -364,6 +357,56 @@ ACController.delete = (req, res, next) => {
     })
 }
 
-
+function dia_sem(search){
+        if (!search.toLowerCase().indexOf('en') || search == '01' ) {
+            console.log(search.toLowerCase())
+            console.log('enero')
+            return search = "-01-"
+        } else if (!search.toLowerCase().indexOf('feb') || search == '02' ) {
+            console.log(search.toLowerCase())
+            console.log('febrero')
+            return search = "-02-"
+        } else if (!search.toLowerCase().indexOf('mar') || search == '03' ) {
+            console.log(search.toLowerCase())
+            console.log('marzo')
+            return search = "-03-"
+        } else if (!search.toLowerCase().indexOf('abr') || search == '04' ) {
+            console.log(search.toLowerCase())
+            console.log('abril')
+            return search = "-04-"
+        } else if (!search.toLowerCase().indexOf('may') || search == '05' ) {
+            console.log(search.toLowerCase())
+            console.log('mayo')
+            return search = "-05-"
+        } else if (!search.toLowerCase().indexOf('jun') || search == '06' ) {
+            console.log(search.toLowerCase())
+            console.log('junio')
+            return search = "-06-"
+        } else if (!search.toLowerCase().indexOf('jul') || search == '07' ) {
+            console.log(search.toLowerCase())
+            console.log('julio')
+            return search = "-07-"
+        } else if (!search.toLowerCase().indexOf('agos') || search == '08' ) {
+            console.log(search.toLowerCase())
+            console.log('agosto')
+            return search = "-08-"
+        } else if (!search.toLowerCase().indexOf('sep') || search == '09' ) {
+            console.log(search.toLowerCase())
+            console.log('septiembre')
+            return search = "-09-"
+        } else if (!search.toLowerCase().indexOf('oct') || search == '010' ) {
+            console.log(search.toLowerCase())
+            console.log('octubre')
+            return search = "-10-"
+        } else if (!search.toLowerCase().indexOf('nov') || search == '011' ) {
+            console.log(search.toLowerCase())
+            console.log('noviembre')
+            return search = "-11-"
+        } else if (!search.toLowerCase().indexOf('dic') || search == '012' ) {
+            console.log(search.toLowerCase())
+            console.log('diciembre')
+            return search = "-12-"
+        }
+}
 
 module.exports = ACController

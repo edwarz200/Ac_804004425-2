@@ -1,6 +1,5 @@
 extends layout
 block content
-    div.mb-3
     section.container
         include header
             div.input-group.mb-3
@@ -11,9 +10,10 @@ block content
                         option.dropdown-item.text-light(value="Numero de acuerdo") Numero de acuerdo
                         option.dropdown-item.text-light(value="Fecha del acuerdo") Fecha del acuerdo
                         option.dropdown-item.text-light(value="Fecha del acuerdo") Año del acuerdo
-                input#inputSearch.form-control.sm-4(type='text', placeholder='Buscar', aria-label='Search', value="#{search}")
+                input#inputSearch.form-control.sm-4(type='text', placeholder='Buscar', data-toggle="tooltip", data-placement="top", title="", aria-label='Search', value="#{search}")
                 div.input-group-append
-                    button.btn.btn-primary.my-2.my-sm-0(type='button', onclick="on('/search/SR:')" ) Search
+                    a.btn.btn-primary.my-2.my-sm-0(type='button', onclick="on('/search/SR:')" )
+                        img#div_search_icon(src="/img/busqueda.png")
 
     section.c-95
         article.item
@@ -48,6 +48,7 @@ block content
                                     input(type="hidden", name="_method", value="DELETE")
                         //- // -cont++
             -else
+                -console.log(image1)
                 table.table.table-striped
                         tr
                             th(scope="col") Id
@@ -57,10 +58,8 @@ block content
                             th(scope="col", colspan="2")
                                 div.input-group
                                 a.btn.btn-block.btn-success(href="/S_U_E:agregar", title="Agregar acuerdos") Agregar
-                            tr
-                                th.no_selection.text-black-50(scope="row") Sin informacion
-                                td.no_selection.text-black-50 Sin informacion
-                                td.no_selection.text-black-50 Sin informacion
-                                td.no_selection.text-black-50 Sin informacion 
-                                td.no_selection
+
+                div.container.text-center
+                    p.text-black-50= txt1
+                    img.img-fluid.w-25(src="#{image1}",alt="Responsive image", id="imagen1")
     include footer

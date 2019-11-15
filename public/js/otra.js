@@ -2,12 +2,19 @@ window.onload = () => {
     var lista = document.getElementById("S_E"),
         lista2 = document.getElementById("C_R"),
         sync = document.getElementById("sync"),
+        search = document.getElementById("List_search"),
         syncInput = document.getElementById("syncInput")
     lista.onchange = () => {
         redirect("S_U_E", lista.value)
     }
     lista2.onchange = () => {
         redirect("C_R", lista2.value)
+    }
+    search.onchange = ()=>{
+        console.log(search.value)
+        if(search.value="Fecha del acuerdo"){
+            document.getElementById('inputSearch').setAttribute('title','Puedes escribir el dia de la semana(lunes, martes, etc..), el nombre del mes (enero, febrero, etc..) como parametros de busqueda')
+        }
     }
 }
 
@@ -20,10 +27,7 @@ function redirect(l, value) {
 
 function on(h) {
     var listaAdd, sORa, inputSearch
-    if (h == "/agregar:nums=") {
-        listaAdd = document.getElementById("inputGroupSelect01")
-        sORa = ""
-    } else if (h == "/search/SR:") {
+    if (h == "/search/SR:") {
         listaAdd = document.getElementById("List_search")
         inputSearch = document.getElementById("inputSearch")
         sORa = "=" + inputSearch.value
@@ -31,20 +35,12 @@ function on(h) {
     location.href = h + listaAdd.value + sORa;
 }
 
-// function onKeyDownHandler(event) {
 
 $("#inputSearch").keypress(function(event) {
     if (event.which == 13) {
         on('/search/SR:')
     }
 });
-
-//     if(codigo >= 65 && codigo <= 90){
-//       console.log(String.fromCharCode(codigo));
-//     }
-
-
-// }
 
 function eliminar(input)
 {
@@ -103,9 +99,7 @@ function myfun(h_d, h, e, s, b,c) {
     } else if (s == ":Fecha del acuerdo") {
         selectS = 3
     }
-    if(b == "si"){
-
-    }else if(b=="no"){
+    if(b=="no"){
         btnsync.classList.remove('btn-info')
         btnsync.classList.add('btn-secondary')
         btnsync.classList.add('btn-lg')
