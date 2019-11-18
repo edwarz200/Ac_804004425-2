@@ -312,6 +312,8 @@ ACModel.search = (num, search, cb) => {
         db.find({ nro_acuerdo: Regex }).exec(cb)
     } else if (num == 4) {
         db.find({ fecha: Regex }).exec(cb)
+    } else if (num == 5) {
+        db.find({ dia_sem: Regex }).exec(cb)
     }
 }
 

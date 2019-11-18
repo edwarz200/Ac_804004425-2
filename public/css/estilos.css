@@ -1,3 +1,12 @@
+#div_search_icon {
+    height: 20px;
+}
+
+#span_fecha {
+    overflow: hidden;
+    font-size: 15px
+}
+
 .no_selection {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -12,10 +21,6 @@
 
 .text-10 {
     font-size: 10px;
-}
-
-#div_search_icon {
-    height: 20px;
 }
 
 .textarea {
@@ -63,18 +68,35 @@
     height: 0;
     overflow: hidden;
 }
+
 .cont {
     animation-name: animation;
     animation-duration: .35s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
+
 .cont2 {
     animation-name: animationd;
     animation-duration: .35s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
+
+.span {
+    animation-name: animation_span;
+    animation-duration: .35s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.span2 {
+    animation-name: animation_spand;
+    animation-duration: .35s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
 @keyframes animation{
     0%{
         height: 0px
@@ -86,6 +108,23 @@
 @keyframes animationd{
     0%{
         height: 410px
+    }
+    100%{
+        height: 0px
+    }
+}
+
+@keyframes animation_span{
+    0%{
+        height: 0px
+    }
+    100%{
+        height: 60px
+    }
+}
+@keyframes animation_spand{
+    0%{
+        height: 60px
     }
     100%{
         height: 0px

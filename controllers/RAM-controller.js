@@ -34,12 +34,17 @@ ACController.push = (req, res, next) => {
 }
 
 ACController.update = (req, res, next) => {
+    var date = req.body.fecha
     let id = req.params._id,
+        miFechaPasada = new Date(date),
+        dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         idmongo = req.body.acuerdo_id,
+        dia_semana = dias[miFechaPasada.getUTCDay()],
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
-            fecha: req.body.fecha,
+            fecha: date,
+            dia_sem: dia_semana,
             detalle: req.body.detalle
         }
     console.log(id)
@@ -263,10 +268,12 @@ ACController.getOne = (req, res, next) => {
 
 ACController.searchForm = (req, res, next) => {
     let sr = req.params.value_search,
+        dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         search = "",
         search_ant="",
         po = "",
-        num
+        num,
+        tooltip = "Puedes escribir el dia de la semana(lunes, martes, etc..), el dia en numero (1,2... 22), el nombre del mes (enero, febrero, etc..) o el numero del mes con un cero antecediendolo (01, 02... 010) como parametros de busqueda"
     if (sr != ":") {
         var arrayDeCadenas = sr.split("=")
         search = arrayDeCadenas[arrayDeCadenas.length - 1]
@@ -282,11 +289,10 @@ ACController.searchForm = (req, res, next) => {
         num = 3
         search_ant = search
     } else if (po == ":Fecha del acuerdo") {
-        num = 4
         search_ant = search
-        search = dia_sem(search)
+        search = dia_sem(search_ant)
         console.log('search2 ' + search)
-    } else {
+    } else{
         num = 0
         search_ant = search
     }
@@ -295,6 +301,7 @@ ACController.searchForm = (req, res, next) => {
         title: 'Buscar Acuerdo Municipal',
         op: 'search',
         search: search_ant,
+        data_save: tooltip,
         data: '',
         image1: '/img/lupa_busqueda.png',
         txt1: 'Realiza una busqueda',
@@ -311,6 +318,7 @@ ACController.searchForm = (req, res, next) => {
                 op: 'search',
                 data: bb,
                 image1: '/img/no_se_encontraron.png',
+                data_save: tooltip,
                 txt1: 'No se encontro ningun resultado coincidente',
                 search: search_ant,
                 input: po
@@ -358,55 +366,131 @@ ACController.delete = (req, res, next) => {
 }
 
 function dia_sem(search){
-        if (!search.toLowerCase().indexOf('en') || search == '01' ) {
-            console.log(search.toLowerCase())
-            console.log('enero')
-            return search = "-01-"
-        } else if (!search.toLowerCase().indexOf('feb') || search == '02' ) {
-            console.log(search.toLowerCase())
-            console.log('febrero')
-            return search = "-02-"
-        } else if (!search.toLowerCase().indexOf('mar') || search == '03' ) {
-            console.log(search.toLowerCase())
-            console.log('marzo')
-            return search = "-03-"
-        } else if (!search.toLowerCase().indexOf('abr') || search == '04' ) {
-            console.log(search.toLowerCase())
-            console.log('abril')
-            return search = "-04-"
-        } else if (!search.toLowerCase().indexOf('may') || search == '05' ) {
-            console.log(search.toLowerCase())
-            console.log('mayo')
-            return search = "-05-"
-        } else if (!search.toLowerCase().indexOf('jun') || search == '06' ) {
-            console.log(search.toLowerCase())
-            console.log('junio')
-            return search = "-06-"
-        } else if (!search.toLowerCase().indexOf('jul') || search == '07' ) {
-            console.log(search.toLowerCase())
-            console.log('julio')
-            return search = "-07-"
-        } else if (!search.toLowerCase().indexOf('agos') || search == '08' ) {
-            console.log(search.toLowerCase())
-            console.log('agosto')
-            return search = "-08-"
-        } else if (!search.toLowerCase().indexOf('sep') || search == '09' ) {
-            console.log(search.toLowerCase())
-            console.log('septiembre')
-            return search = "-09-"
-        } else if (!search.toLowerCase().indexOf('oct') || search == '010' ) {
-            console.log(search.toLowerCase())
-            console.log('octubre')
-            return search = "-10-"
-        } else if (!search.toLowerCase().indexOf('nov') || search == '011' ) {
-            console.log(search.toLowerCase())
-            console.log('noviembre')
-            return search = "-11-"
-        } else if (!search.toLowerCase().indexOf('dic') || search == '012' ) {
-            console.log(search.toLowerCase())
-            console.log('diciembre')
-            return search = "-12-"
+    var split,param1,param1_ant,param2,param2_ant,paramUlt,paramUlt_ant,mes,cero="", indicador_dia=0, indicador_mes=0,indicador_dia_num=0,
+        dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
+        meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+        meses_num = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "010", "011", "012"],
+        dias_mes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18", "19", "20", "21", "22","23", "24", "25", "26", "27", "28", "29", "30", "31"],
+        numeros = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    if(search.indexOf(" ")!=-1){
+        split = search.split(" ")
+        console.log("1",split)
+    }else if(search.indexOf("-")!=-1){
+        split = search.split("-")
+        console.log("2",split)
+    }else if(split!= undefined){
+        param1 = split[0]
+        paramUlt = split[split.length - 1]
+        if (split.length==3) {
+            param2 = split[1]
+            console.log("entro split1 = " + param1 + " " + param2 + " " + paramUlt)
+        } 
+    }else{
+        param1 = search
+    }
+    // dias de la semana
+    if(dias.includes(param1)){
+        param1_ant = param1
+        param1 = search
+        indicador_dia = 1
+        console.log("param1 = ", param1)
+    }else if(dias.includes(param2)){
+        param1_ant = param1
+        param1 = search
+        indicador_dia = 2
+        console.log("param2 = ", param2)
+    }else if(dias.includes(paramUlt)){
+        paramUlt_ant = paramUlt
+        paramUlt = search
+        indicador_dia = 3
+        console.log("param3 = ", paramUlt)
+    }else{
+       console.log("ninguno")
+    }
+
+    //meses
+
+    if(meses.indexOf(param1) != -1){
+        param1_ant = param1
+        mes = numeros[meses.indexOf(param1_ant)]
+        if(mes<10){
+            cero = "0"
         }
+        param1 = "-"+cero+mes+"-"
+        console.log("param1 = ", param1)
+    }else if(meses.indexOf(param2) != -1){
+        param2_ant = param2
+        mes = numeros[meses.indexOf(param2_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        param2 = "-"+cero+mes+"-"
+        console.log("param2 = ", param2)
+    }else if(meses.indexOf(paramUlt) != -1){
+        paramUlt_ant = paramUlt
+        mes = numeros[meses.indexOf(paramUlt_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        paramUlt = "-"+cero+mes+"-"
+        console.log("param3 = ", paramUlt)
+    }else if(meses_num.includes(param1) != -1){
+        param1_ant = param1
+        mes = numeros[meses_num.indexOf(param1_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        param1 = "-"+cero+mes+"-"
+        console.log("param1 = ", param1)
+    }else if(meses_num.includes(param2) != -1){
+        param2_ant = param2
+        mes = numeros[meses_num.indexOf(param2_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        param2 = "-"+cero+mes+"-"
+        console.log("param2 = ", param2)
+    }else if(meses_num.includes(paramUlt) != -1){
+        paramUlt_ant = paramUlt
+        mes = numeros[meses_num.indexOf(paramUlt_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        paramUlt = "-"+cero+mes+"-"
+        console.log("param3 = ", paramUlt)
+    }else{
+       console.log("ninguno")
+    }
+
+    //dias en numero
+
+    if(dias_mes.includes(param1) != -1){
+        param1_ant = param1
+        mes = numeros[dias_mes.indexOf(param1_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        param1 = "-"+cero+mes+"-"
+        console.log("param1 = ", param1)
+    }else if(dias_mes.includes(param2) != -1){
+        param2_ant = param2
+        mes = numeros[dias_mes.indexOf(param2_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        param2 = "-"+cero+mes+"-"
+        console.log("param2 = ", param2)
+    }else if(dias_mes.includes(paramUlt) != -1){
+        paramUlt_ant = paramUlt
+        mes = numeros[dias_mes.indexOf(paramUlt_ant)]
+        if(mes<10){
+            cero = "0"
+        }
+        paramUlt = "-"+cero+mes+"-"
+        console.log("param3 = ", paramUlt)
+    }else{
+       console.log("ninguno")
+    }
 }
 
 module.exports = ACController

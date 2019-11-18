@@ -1,15 +1,10 @@
 div.fixed-bottom.text-center
     button#sync.sync.btn.btn-primary(type="button")
-        span.spinner-grow.spinner-grow-sm(role="status",aria-hidden="true")
-        | Sincronizando...
 script(src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous")
 script(src="/bootstrap/js/bootstrap.js")
 script(src="/js/otra.js")
 //- script(src="/js/ConcurrentThreadCompiler+Http.js")
 script.
-    $(function(){
-        $('[data-toggle="tooltip"]').tooltip()
-    })
     var d= document.querySelector("#disables"),
         o= document.querySelector("#op"),
         e= document.querySelector("#nums"),

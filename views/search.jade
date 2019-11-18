@@ -9,12 +9,12 @@ block content
                         option.dropdown-item.text-light(value="Palabra") Palabra
                         option.dropdown-item.text-light(value="Numero de acuerdo") Numero de acuerdo
                         option.dropdown-item.text-light(value="Fecha del acuerdo") Fecha del acuerdo
-                        option.dropdown-item.text-light(value="Fecha del acuerdo") Año del acuerdo
-                input#inputSearch.form-control.sm-4(type='text', placeholder='Buscar', data-toggle="tooltip", data-placement="top", title="", aria-label='Search', value="#{search}")
+                input#inputSearch.form-control.sm-4(type='text', placeholder='Buscar', data-toggle="tooltip", data-placement="top", title="", aria-label='Search', onkeyup="this.value=Numeros(this.value)", value="#{search}")
                 div.input-group-append
                     a.btn.btn-primary.my-2.my-sm-0(type='button', onclick="on('/search/SR:')" )
                         img#div_search_icon(src="/img/busqueda.png")
-
+            div#span_fecha.span2
+                include alerts
     section.c-95
         article.item
             -if(data!="")

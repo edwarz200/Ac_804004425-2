@@ -3,7 +3,9 @@ window.onload = () => {
         lista2 = document.getElementById("C_R"),
         sync = document.getElementById("sync"),
         search = document.getElementById("List_search"),
-        syncInput = document.getElementById("syncInput")
+        syncInput = document.getElementById("syncInput"),
+        span_fecha = document.getElementById("span_fecha"),
+        numspan = 0
     lista.onchange = () => {
         redirect("S_U_E", lista.value)
     }
@@ -12,11 +14,20 @@ window.onload = () => {
     }
     search.onchange = ()=>{
         console.log(search.value)
-        if(search.value="Fecha del acuerdo"){
-            document.getElementById('inputSearch').setAttribute('title','Puedes escribir el dia de la semana(lunes, martes, etc..), el nombre del mes (enero, febrero, etc..) como parametros de busqueda')
+        if(search.value=="Fecha del acuerdo"){  
+            span_fecha.classList.remove('span2')
+            span_fecha.classList.add('span')
+            numspan = 1
+        }else if(numspan==1){
+            span_fecha.classList.add('span2')
+            span_fecha.classList.remove('span')
         }
     }
 }
+
+function Numeros(string){//Solo numeros
+    return string.split("/").join("-");
+} 
 
 function redirect(l, value) {
     if (value == "Deshabilitar")
