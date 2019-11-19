@@ -311,9 +311,7 @@ ACModel.search = (num, search, cb) => {
     } else if (num == 3) {
         db.find({ nro_acuerdo: Regex }).exec(cb)
     } else if (num == 4) {
-        db.find({ fecha: Regex }).exec(cb)
-    } else if (num == 5) {
-        db.find({ dia_sem: Regex }).exec(cb)
+        db.find({ $or:[{fecha: Regex },{ dia_sem: Regex }]}).exec(cb)
     }
 }
 
