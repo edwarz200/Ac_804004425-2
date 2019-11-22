@@ -301,9 +301,10 @@ ACModel.SyncMongo = (cb) => {
     })
 }
 
-ACModel.search = (num, search, cb) => {
+ACModel.search = (num, search1, search2, cb) => {
     // detalle: /search/
-    const Regex = new RegExp(search, 'i')
+    const Regex = new RegExp(search1, 'i')
+    const Regex2 = new RegExp(search2, 'i')
     if (num == 1) {
         db.find({ $or: [{ nro_acuerdo: Regex }, { fecha: Regex }, { detalle: Regex }] }, cb)
     } else if (num == 2) {
@@ -312,6 +313,10 @@ ACModel.search = (num, search, cb) => {
         db.find({ nro_acuerdo: Regex }).exec(cb)
     } else if (num == 4) {
         db.find({ $or:[{fecha: Regex },{ dia_sem: Regex }]}).exec(cb)
+    } else if (num == 5) {
+        db.find({dia_sem: Regex}).exec(cb)
+    } else if (num == 6) {
+        db.find({ $or:[{fecha: Regex },{ dia_sem: Regex2 }]}).exec(cb)
     }
 }
 

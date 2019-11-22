@@ -5,17 +5,18 @@ var ACModel = require('../models/RAM-model'),
     // algolia = require('../models/RAM-Algolia'),
     ACController = () => {}
 ACController.push = (req, res, next) => {
-    var fecha = req.body.fecha
-    console.log(fecha)
+    var date = req.body.fecha,
+        arrayfecha = date.split("-"),
+        dia = arrayfecha[arrayfecha.length - 1]
     let id = req.body.acuerdo_id,
-        idmongo = id,
-        miFechaPasada = new Date(fecha),
+        miFechaPasada = new Date(date),
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
-        dia_semana = dias[miFechaPasada.getUTCDay()],
+        idmongo = id,
+        dia_semana = dias[miFechaPasada.getUTCDay()]+"-"+dia,
         AC = {
-            acuerdo_id: req.body.acuerdo_id,
+            acuerdo_id: id,
             nro_acuerdo: req.body.nro_acuerdo,
-            fecha: req.body.fecha,
+            fecha: date,
             dia_sem: dia_semana,
             detalle: req.body.detalle
         }
@@ -34,12 +35,14 @@ ACController.push = (req, res, next) => {
 }
 
 ACController.update = (req, res, next) => {
-    var date = req.body.fecha
+    var date = req.body.fecha,
+        arrayfecha = date.split("-"),
+        dia = arrayfecha[arrayfecha.length - 1]
     let id = req.params._id,
         miFechaPasada = new Date(date),
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         idmongo = req.body.acuerdo_id,
-        dia_semana = dias[miFechaPasada.getUTCDay()],
+        dia_semana = dias[miFechaPasada.getUTCDay()]+"-"+dia,
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -267,7 +270,7 @@ ACController.getOne = (req, res, next) => {
 }
 
 ACController.searchForm = (req, res, next) => {
-    let sr = req.params.value_search,
+    let sr = req.params.value_search,search1,search2,arrayDeCadenas,
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         search = "",
         search_ant="",
@@ -275,27 +278,42 @@ ACController.searchForm = (req, res, next) => {
         num,
         tooltip = "Puedes escribir el dia de la semana(lunes, martes, etc..), el dia en numero (1,2... 22), el nombre del mes (enero, febrero, etc..) o el numero del mes con un cero antecediendolo (01, 02... 010) como parametros de busqueda"
     if (sr != ":") {
-        var arrayDeCadenas = sr.split("=")
+        arrayDeCadenas = sr.split("=")
         search = arrayDeCadenas[arrayDeCadenas.length - 1]
         po = arrayDeCadenas[0]
     }
     if (po == ":Todo") {
         num = 1
         search_ant = search
+        search1 = search
     } else if (po == ":Palabra") {
         num = 2
         search_ant = search
+        search1 = search
     } else if (po == ":  de acuerdo") {
         num = 3
         search_ant = search
+        search1 = search
     } else if (po == ":Fecha del acuerdo") {
         search_ant = search
-        search = dia_sem(search_ant)
-        console.log('search2 ' + search)
-        num = 4
+        search1 = dia_sem(search_ant)
+        console.log(search1)
+        if(search1.length==3){
+            num = 5
+        }else if(search1.includes("=")){
+            arrayDeCadenas = search1.split("=")
+            search1 = arrayDeCadenas[arrayDeCadenas.length - 1]
+            search2 = arrayDeCadenas[0]
+            console.log("numero igual a 6")
+            num = 6
+        }else{
+            num = 4
+        }
+        console.log('search1= ' + search1 + ' search2= ' + search2)
     } else{
         num = 0
         search_ant = search
+        search1 = search
     }
     console.log("sr= " + sr + " po= " + po + " search= " + search_ant)
     let locals = {
@@ -310,7 +328,7 @@ ACController.searchForm = (req, res, next) => {
     }
     if (num != 0) {
         console.log("entro")
-        ACModel.search(num, search, async(err, bb) => {
+        ACModel.search(num, search1, search2, async(err, bb) => {
             for (var i = 0; i < bb.length; i++) {
                 console.log(bb[i])
             }
@@ -367,7 +385,7 @@ ACController.delete = (req, res, next) => {
 }
 
 function dia_sem(search){
-    var split,param1,param1_ant,param2,param2_ant,param3,paramUlt,paramUlt_ant,mes,dias,cero="", indicador_dia=0, indicador_mes=0,ninguno=[],i=0,
+    var split,param1,param1_ant,param2,param2_ant,param3,paramUlt,paramUlt_ant,mes,dias,params,cero="", indicador_dia=0, indicador_mes=0,ninguno=[],i=0,
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
         meses_num = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "010", "011", "012"],
@@ -386,15 +404,17 @@ function dia_sem(search){
         paramUlt = split[split.length - 1]
         if (split.length==3) {
             param2 = split[1]
-        }
             console.log("entro split1 = " + param1 + " " + param2 + " " + paramUlt)
+        }else{
+            console.log("entro split1 = " + param1 + " " + paramUlt)
+        }
     }else{
         param1 = search
         console.log(param1)
     }
 
     // dias de la semana
-    
+
     if(dias.includes(param1)){
         param1 = param1
         indicador_dia = 1
@@ -467,6 +487,7 @@ function dia_sem(search){
             cero = "0"
         }
         param1 = "-"+cero+dias
+        indicador_dia = 4
         console.log("param1 = ", param1)
     }else if(dias_mes.includes(param2) && indicador_dia != 2 && indicador_mes != 2 && param2!=undefined){
         param2_ant = param2
@@ -475,6 +496,7 @@ function dia_sem(search){
             cero = "0"
         }
         param2 = "-"+cero+dias
+        indicador_dia = 5
         console.log("param2 = ", param2)
     }else if(dias_mes.includes(paramUlt) && indicador_dia != 3 && indicador_mes != 3 && paramUlt!=undefined){
         paramUlt_ant = paramUlt
@@ -483,6 +505,7 @@ function dia_sem(search){
             cero = "0"
         }
         paramUlt = "-"+cero+dias
+        indicador_dia = 6
         console.log("param3 = ", paramUlt)
     }else{
        console.log("ninguno")
@@ -492,7 +515,26 @@ function dia_sem(search){
     if(i>=3){
         return param1
     }else if(i==2){
-
+        if(split!= undefined){
+            console.log("parametro 1 =",param1)
+            if (param1.length==4 && param1.includes("-")){
+                console.log("parametro 1 tiene -")
+                params = paramUlt+param1
+            }else if(paramUlt.length==4 && paramUlt.includes("-")){
+                console.log("parametro 2 tiene -")
+                params = param1+paramUlt
+            }else if(indicador_dia==1|| indicador_dia==4){
+                console.log("parametro 1 es un dia")
+                params = paramUlt + "=" + param1
+            }else if(indicador_dia==3 || indicador_dia==6){
+                console.log("parametro 2 es un dia")
+                params = param1 + "=" + paramUlt
+            }
+        }else{
+            params = param1
+        }
+        console.log(params)
+        return params
     }else if(i==1){
         console.log(param1,paramUlt)
         param3 = param1+paramUlt
