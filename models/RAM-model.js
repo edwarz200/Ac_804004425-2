@@ -24,7 +24,7 @@ ACModel.getAllFirebase = (cb) => {
     conn.ref('RAM/').once('value', cb)
 }
 
-ACModel.sync = (numsnao,cb) => {
+ACModel.sync = (numsnao, cb) => {
     conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
         var id, nro_acuerdo, fecha, detalle, data
         db.find((err, c) => {
@@ -41,8 +41,9 @@ ACModel.sync = (numsnao,cb) => {
                         id = cc.acuerdo_id
                     nro_acuerdo = cc.nro_acuerdo
                     fecha = cc.fecha
+                    dia_sem = cc.dia_sem
                     detalle = cc.detalle
-                    data = { nro_acuerdo, fecha, detalle }
+                    data = { nro_acuerdo, fecha, dia_sem, detalle }
                     if (snapshot.exists()) {
                         snapshot.some((childSnapshot) => {
                             var vuelta = "vuelta numero " + num
@@ -121,14 +122,14 @@ ACModel.SyncMongo = (cb) => {
             } else if (cc.length != 0 && snapshot.exists()) {
                 contador_de_hijos = snapshot.numChildren()
                 let ccc = cc.length
-                // while(contador_de_hijos<ccc||contador_de_hijos>ccc){
+                    // while(contador_de_hijos<ccc||contador_de_hijos>ccc){
                 console.log('contador_de_hijos = ' + contador_de_hijos)
-                console.log('cc.length = ' + cc.length )
+                console.log('cc.length = ' + cc.length)
                 var childKey = {},
                     childSnapshot, isss = 0,
                     iss = 0,
                     numsnao = 0
-                if(contador_de_hijos<=cc.length){
+                if (contador_de_hijos <= cc.length) {
                     var childKey = {},
                         childSnapshot, isss = 0,
                         iss = 0
@@ -139,50 +140,51 @@ ACModel.SyncMongo = (cb) => {
                             id = c.acuerdo_id,
                             nro_acuerdo = c.nro_acuerdo,
                             fecha = c.fecha,
+                            dia_sem = c.dia_sem,
                             detalle = c.detalle,
-                            data = { acuerdo_id: id, nro_acuerdo, fecha, detalle }
-                            snapshot.forEach((childSnapshot) => {
-                                var vuelta = "vuelta numero " + num
-                                    // console.log(childSnapshot.key)
-                                console.log(vuelta)
-                                childKey[isss] = childSnapshot.key
-                                childSnapshot = snapshot.val()
-                                    // childKey.objectID = childKey
-                                if (childKey[isss] == id) {
-                                    var updates = {}
-                                    updates['/RAM/' + id] = data
-                                    conn.ref().update(updates, (err) => {
-                                        if (err) {
-                                            console.log(err)
-                                        } else {
-                                            console.log("actualizado")
-                                        }
-                                    })
-                                    console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
-                                    numsnapshot = 1
-                                    return true
-                                }
-                                num++
-                            });
-                            numsnao++
-                            console.log(num)
-                            if (numsnapshot == 0) {
-                                conn.ref('RAM').child(id).set(data, async(err) => {
+                            data = { acuerdo_id: id, nro_acuerdo, fecha, dia_sem, detalle }
+                        snapshot.forEach((childSnapshot) => {
+                            var vuelta = "vuelta numero " + num
+                                // console.log(childSnapshot.key)
+                            console.log(vuelta)
+                            childKey[isss] = childSnapshot.key
+                            childSnapshot = snapshot.val()
+                                // childKey.objectID = childKey
+                            if (childKey[isss] == id) {
+                                var updates = {}
+                                updates['/RAM/' + id] = data
+                                conn.ref().update(updates, (err) => {
                                     if (err) {
-                                        console.log('error al guardar el dato con el id: ' + id + ' en la nube')
+                                        console.log(err)
                                     } else {
-                                        console.log('exito')
+                                        console.log("actualizado")
                                     }
-                                    numsnapshot = 2
-                                    console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
                                 })
+                                console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
+                                numsnapshot = 1
+                                return true
                             }
-                            // console.log(numsnapshot)
-                            // if (numsnapshot == 0) {
-                            //     console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
-                            // }
-                            // }
-                            isss++
+                            num++
+                        });
+                        numsnao++
+                        console.log(num)
+                        if (numsnapshot == 0) {
+                            conn.ref('RAM').child(id).set(data, async(err) => {
+                                if (err) {
+                                    console.log('error al guardar el dato con el id: ' + id + ' en la nube')
+                                } else {
+                                    console.log('exito')
+                                }
+                                numsnapshot = 2
+                                console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
+                            })
+                        }
+                        // console.log(numsnapshot)
+                        // if (numsnapshot == 0) {
+                        //     console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
+                        // }
+                        // }
+                        isss++
 
                     });
                     console.log(cc.length)
@@ -192,7 +194,7 @@ ACModel.SyncMongo = (cb) => {
                     }
                     iss++
                 }
-                if(contador_de_hijos>cc.length){
+                if (contador_de_hijos > cc.length) {
                     snapshot.forEach((childSnapshot) => {
                         childKey[iss] = childSnapshot.key
                         let num = 0,
@@ -201,8 +203,9 @@ ACModel.SyncMongo = (cb) => {
                             acuerdo_id = childKey[iss],
                             nro_acuerdo = childss.nro_acuerdo,
                             fecha = childss.fecha,
+                            dia_sem = childss.dia_sem,
                             detalle = childss.detalle,
-                            data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                            data = { acuerdo_id, nro_acuerdo, fecha, dia_sem, detalle }
                             // childSnapshot = snapshot.val()
                         cc.some((c) => {
                             var vuelta = "vuelta numero " + num
@@ -222,7 +225,7 @@ ACModel.SyncMongo = (cb) => {
                                 return true;
                             }
                             num++
-                            
+
                             // console.log('cc'+c)
                         });
                         numsnao++
@@ -249,8 +252,8 @@ ACModel.SyncMongo = (cb) => {
                 }
                 contador_de_hijos = snapshot.numChildren()
                 ccc = cc.length
-                // }
-                // 
+                    // }
+                    // 
             } else if (snapshot.exists()) {
                 var num = 0,
                     childKey = {},
@@ -258,15 +261,16 @@ ACModel.SyncMongo = (cb) => {
                 snapshot.forEach((childSnapshot) => {
                     // console.log('enttttttrrrrrooo')
                     var vuelta = "vuelta numero " + num
-                    // console.log(childSnapshot.key)
+                        // console.log(childSnapshot.key)
                     childKey[num] = childSnapshot.key
-                    // console.log(childKey[num])
+                        // console.log(childKey[num])
                     let childss = childSnapshot.val(),
                         acuerdo_id = childKey[num],
                         nro_acuerdo = childss.nro_acuerdo,
                         fecha = childss.fecha,
+                        dia_sem = childss.dia_sem,
                         detalle = childss.detalle,
-                        data = { acuerdo_id, nro_acuerdo, fecha, detalle }
+                        data = { acuerdo_id, nro_acuerdo, fecha, dia_sem, detalle }
                         // child = childKey[num] + childss
                         // childKey.objectID = childKey
                         // console.log('guardado', acuerdo_id)
@@ -274,7 +278,7 @@ ACModel.SyncMongo = (cb) => {
                     newAc.save().then((bb) => {
                         console.log('guardado ' + bb.acuerdo_id)
                         console.log('no', childKey[num], '  odsmosmdso', bb.acuerdo_id)
-                    }).catch((err)=>{
+                    }).catch((err) => {
                         console.log('error ' + err)
                     })
                     num++
@@ -312,11 +316,11 @@ ACModel.search = (num, search1, search2, cb) => {
     } else if (num == 3) {
         db.find({ nro_acuerdo: Regex }).exec(cb)
     } else if (num == 4) {
-        db.find({ $or:[{fecha: Regex },{ dia_sem: Regex }]}).exec(cb)
+        db.find({ $or: [{ fecha: Regex }, { dia_sem: Regex }] }).exec(cb)
     } else if (num == 5) {
-        db.find({dia_sem: Regex}).exec(cb)
+        db.find({ dia_sem: Regex }).exec(cb)
     } else if (num == 6) {
-        db.find({ $or:[{fecha: Regex },{ dia_sem: Regex2 }]}).exec(cb)
+        db.find({ $or: [{ fecha: Regex }, { dia_sem: Regex2 }] }).exec(cb)
     }
 }
 

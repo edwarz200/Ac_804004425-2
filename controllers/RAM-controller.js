@@ -12,7 +12,7 @@ ACController.push = (req, res, next) => {
         miFechaPasada = new Date(date),
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         idmongo = id,
-        dia_semana = dias[miFechaPasada.getUTCDay()]+"-"+dia,
+        dia_semana = dias[miFechaPasada.getUTCDay()] + "-" + dia,
         AC = {
             acuerdo_id: id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -42,7 +42,7 @@ ACController.update = (req, res, next) => {
         miFechaPasada = new Date(date),
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         idmongo = req.body.acuerdo_id,
-        dia_semana = dias[miFechaPasada.getUTCDay()]+"-"+dia,
+        dia_semana = dias[miFechaPasada.getUTCDay()] + "-" + dia,
         AC = {
             acuerdo_id: req.body.acuerdo_id,
             nro_acuerdo: req.body.nro_acuerdo,
@@ -270,10 +270,11 @@ ACController.getOne = (req, res, next) => {
 }
 
 ACController.searchForm = (req, res, next) => {
-    let sr = req.params.value_search,search1,search2,arrayDeCadenas,
+    let sr = req.params.value_search,
+        search1, search2, arrayDeCadenas,
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         search = "",
-        search_ant="",
+        search_ant = "",
         po = "",
         num,
         tooltip = "Puedes escribir el dia de la semana(lunes, martes, etc..), el dia en numero (1,2... 22), el nombre del mes (enero, febrero, etc..) o el numero del mes con un cero antecediendolo (01, 02... 010) como parametros de busqueda"
@@ -298,19 +299,19 @@ ACController.searchForm = (req, res, next) => {
         search_ant = search
         search1 = dia_sem(search_ant)
         console.log(search1)
-        if(search1.length==3){
+        if (search1.length == 3) {
             num = 5
-        }else if(search1.includes("=")){
+        } else if (search1.includes("=")) {
             arrayDeCadenas = search1.split("=")
             search1 = arrayDeCadenas[arrayDeCadenas.length - 1]
             search2 = arrayDeCadenas[0]
             console.log("numero igual a 6")
             num = 6
-        }else{
+        } else {
             num = 4
         }
         console.log('search1= ' + search1 + ' search2= ' + search2)
-    } else{
+    } else {
         num = 0
         search_ant = search
         search1 = search
@@ -384,162 +385,166 @@ ACController.delete = (req, res, next) => {
     })
 }
 
-function dia_sem(search){
-    var split,param1,param1_ant,param2,param2_ant,param3,paramUlt,paramUlt_ant,mes,dias,params,cero="", indicador_dia=0, indicador_mes=0,ninguno=[],i=0,
+function dia_sem(search) {
+    var split, param1, param1_ant, param2, param2_ant, param3, paramUlt, paramUlt_ant, mes, dias, params, cero = "",
+        indicador_dia = 0,
+        indicador_mes = 0,
+        ninguno = [],
+        i = 0,
         dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"],
         meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
         meses_num = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "010", "011", "012"],
-        dias_mes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18", "19", "20", "21", "22","23", "24", "25", "26", "27", "28", "29", "30", "31"],
+        dias_mes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
         numeros = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-    if(search.indexOf(" ")!=-1){
+    if (search.indexOf(" ") != -1) {
         split = search.split(" ")
-        console.log("1",split)
-    }else if(search.indexOf("-")!=-1){
+        console.log("1", split)
+    } else if (search.indexOf("-") != -1) {
         split = search.split("-")
-        console.log("2",split)
+        console.log("2", split)
     }
 
-    if(split!= undefined){
+    if (split != undefined) {
         param1 = split[0]
         paramUlt = split[split.length - 1]
-        if (split.length==3) {
+        if (split.length == 3) {
             param2 = split[1]
             console.log("entro split1 = " + param1 + " " + param2 + " " + paramUlt)
-        }else{
+        } else {
             console.log("entro split1 = " + param1 + " " + paramUlt)
         }
-    }else{
+    } else {
         param1 = search
         console.log(param1)
     }
 
     // dias de la semana
 
-    if(dias.includes(param1)){
+    if (dias.includes(param1)) {
         param1 = param1
         indicador_dia = 1
         console.log("param1 = ", param1)
-    }else if(dias.includes(param2)){
+    } else if (dias.includes(param2)) {
         param2 = param2
         indicador_dia = 2
         console.log("param2 = ", param2)
-    }else if(dias.includes(paramUlt)){
+    } else if (dias.includes(paramUlt)) {
         paramUlt = paramUlt
         indicador_dia = 3
         console.log("param3 = ", paramUlt)
-    }else{
-       console.log("ninguno")
-       ninguno[i]=1
-       i++
+    } else {
+        console.log("ninguno")
+        ninguno[i] = 1
+        i++
     }
 
     //meses
 
-    if(meses.indexOf(param1) != -1 && indicador_dia != 1 && param1!=undefined){
+    if (meses.indexOf(param1) != -1 && indicador_dia != 1 && param1 != undefined) {
         param1_ant = param1
         mes = numeros[meses.indexOf(param1_ant)]
-        param1 = "-"+mes+"-"
+        param1 = "-" + mes + "-"
         indicador_mes = 1
         console.log("param1 a= ", param1)
-    }else if(meses.indexOf(param2) != -1 && indicador_dia != 2 && param2!=undefined){
+    } else if (meses.indexOf(param2) != -1 && indicador_dia != 2 && param2 != undefined) {
         param2_ant = param2
         mes = numeros[meses.indexOf(param2_ant)]
-        param2 = "-"+mes+"-"
+        param2 = "-" + mes + "-"
         indicador_mes = 2
         console.log("param2 = ", param2)
-    }else if(meses.indexOf(paramUlt) != -1 && indicador_dia != 3 && paramUlt!=undefined){
+    } else if (meses.indexOf(paramUlt) != -1 && indicador_dia != 3 && paramUlt != undefined) {
         paramUlt_ant = paramUlt
         mes = numeros[meses.indexOf(paramUlt_ant)]
-        paramUlt = "-"+mes+"-"
+        paramUlt = "-" + mes + "-"
         indicador_mes = 3
         console.log("param3 = ", paramUlt)
-    }else if(meses_num.includes(param1) && indicador_dia != 1 && param1!=undefined){
+    } else if (meses_num.includes(param1) && indicador_dia != 1 && param1 != undefined) {
         param1_ant = param1
         mes = numeros[meses_num.indexOf(param1_ant)]
-        param1 = "-"+mes+"-"
+        param1 = "-" + mes + "-"
         indicador_mes = 1
         console.log("param1 b= ", param1)
-    }else if(meses_num.includes(param2) && indicador_dia != 2 && param2!=undefined){
+    } else if (meses_num.includes(param2) && indicador_dia != 2 && param2 != undefined) {
         param2_ant = param2
         mes = numeros[meses_num.indexOf(param2_ant)]
-        param2 = "-"+mes+"-"
+        param2 = "-" + mes + "-"
         indicador_mes = 2
         console.log("param2 = ", param2)
-    }else if(meses_num.includes(paramUlt) && indicador_dia != 3 && paramUlt!=undefined){
+    } else if (meses_num.includes(paramUlt) && indicador_dia != 3 && paramUlt != undefined) {
         paramUlt_ant = paramUlt
         mes = numeros[meses_num.indexOf(paramUlt_ant)]
-        paramUlt = "-"+mes+"-"
+        paramUlt = "-" + mes + "-"
         indicador_mes = 3
         console.log("param3 = ", paramUlt)
-    }else{
-       console.log("ninguno")
-       ninguno[i]=2
-       console.log(ninguno)
-       i++
+    } else {
+        console.log("ninguno")
+        ninguno[i] = 2
+        console.log(ninguno)
+        i++
     }
 
     //dias en numero
 
-    if(dias_mes.includes(param1) && indicador_dia != 1 && indicador_mes != 1 && param1!=undefined){
+    if (dias_mes.includes(param1) && indicador_dia != 1 && indicador_mes != 1 && param1 != undefined) {
         param1_ant = param1
         dias = dias_mes[dias_mes.indexOf(param1_ant)]
-        if(dias<10){
+        if (dias < 10) {
             cero = "0"
         }
-        param1 = "-"+cero+dias
+        param1 = "-" + cero + dias
         indicador_dia = 4
         console.log("param1 = ", param1)
-    }else if(dias_mes.includes(param2) && indicador_dia != 2 && indicador_mes != 2 && param2!=undefined){
+    } else if (dias_mes.includes(param2) && indicador_dia != 2 && indicador_mes != 2 && param2 != undefined) {
         param2_ant = param2
         dias = dias_mes[dias_mes.indexOf(param2_ant)]
-        if(dias<10){
+        if (dias < 10) {
             cero = "0"
         }
-        param2 = "-"+cero+dias
+        param2 = "-" + cero + dias
         indicador_dia = 5
         console.log("param2 = ", param2)
-    }else if(dias_mes.includes(paramUlt) && indicador_dia != 3 && indicador_mes != 3 && paramUlt!=undefined){
+    } else if (dias_mes.includes(paramUlt) && indicador_dia != 3 && indicador_mes != 3 && paramUlt != undefined) {
         paramUlt_ant = paramUlt
         dias = dias_mes[dias_mes.indexOf(paramUlt_ant)]
-        if(dias<10){
+        if (dias < 10) {
             cero = "0"
         }
-        paramUlt = "-"+cero+dias
+        paramUlt = "-" + cero + dias
         indicador_dia = 6
         console.log("param3 = ", paramUlt)
-    }else{
-       console.log("ninguno")
-        ninguno[i]=3
+    } else {
+        console.log("ninguno")
+        ninguno[i] = 3
         i++
     }
-    if(i>=3){
+    if (i >= 3) {
         return param1
-    }else if(i==2){
-        if(split!= undefined){
-            console.log("parametro 1 =",param1)
-            if (param1.length==4 && param1.includes("-")){
+    } else if (i == 2) {
+        if (split != undefined) {
+            console.log("parametro 1 =", param1)
+            if (param1.length == 4 && param1.includes("-")) {
                 console.log("parametro 1 tiene -")
-                params = paramUlt+param1
-            }else if(paramUlt.length==4 && paramUlt.includes("-")){
+                params = paramUlt + param1
+            } else if (paramUlt.length == 4 && paramUlt.includes("-")) {
                 console.log("parametro 2 tiene -")
-                params = param1+paramUlt
-            }else if(indicador_dia==1|| indicador_dia==4){
+                params = param1 + paramUlt
+            } else if (indicador_dia == 1 || indicador_dia == 4) {
                 console.log("parametro 1 es un dia")
                 params = paramUlt + "=" + param1
-            }else if(indicador_dia==3 || indicador_dia==6){
+            } else if (indicador_dia == 3 || indicador_dia == 6) {
                 console.log("parametro 2 es un dia")
                 params = param1 + "=" + paramUlt
             }
-        }else{
+        } else {
             params = param1
         }
         console.log(params)
         return params
-    }else if(i==1){
-        console.log(param1,paramUlt)
-        param3 = param1+paramUlt
+    } else if (i == 1) {
+        console.log(param1, paramUlt)
+        param3 = param1 + paramUlt
         return param3
-    }else if(i=0){
+    } else if (i = 0) {
 
     }
 }
