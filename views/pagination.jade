@@ -1,0 +1,43 @@
+-if(pages){
+	nav(aria-label="Page navigation example")
+		ul.pagination.justify-content-center
+			-if(current == "1"){
+				li.page-item.disabled
+					a.page-link(href="") 1
+			-}else{
+				li.page-item.rounded-circle
+					a(class="page-link", href="#", aria-label="Next") &raquo;
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=:1") 1
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 2
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 3
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=#{pages}", aria-label="Next") &raquo;
+			-}
+			-if(current != 1 && current != pages){
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=1", aria-label="Previous") &laquo;
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=:1") 1
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 2
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 3
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=#{pages}", aria-label="Next") &raquo;
+			-}
+			-if(current == pages){
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=1", aria-label="Previous") &laquo;
+				li.page-item.rounded-circle
+					a(class="page-link", href="/a_pag=:1") 1
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 2
+				li.page-item.rounded-circle
+					a(class="page-link", href="#") 3
+				li.page-item.disabled
+					a.page-link(href="") &raquo;
+			-}
+-}

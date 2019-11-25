@@ -14,103 +14,20 @@ ACModel.getConection = (cb) => {
     require('dns').resolve('www.google.com', cb);
 }
 
-ACModel.getAll = (cb) => {
-    db.find(cb).sort({ fecha: 1, nro_acuerdo: 1 })
+ACModel.getAll = (perPage, page, cb) => {
+    db
+        .find({})
+        .skip((perPage * page) - perPage)
+        .limit(perPage)
+        .sort({ fecha: -1})
+        .exec(cb)
+
         // conn.ref('RAM/').once('value', cb)
 }
 
 ACModel.getAllFirebase = (cb) => {
     // db.find(cb).sort({fecha: 1, nro_acuerdo: 1} )
     conn.ref('RAM/').once('value', cb)
-}
-
-ACModel.sync = (numsnao, cb) => {
-    conn.ref('RAM/').orderByChild('fecha').once('value', snapshot => {
-        var id, nro_acuerdo, fecha, detalle, data
-        db.find((err, c) => {
-            if (err) {
-                console.log(err)
-            } else {
-                var childKey = {},
-                    childSnapshot, isss = 0,
-                    iss = 0
-                c.forEach(function(cc) {
-                    let numsnapshot = 0,
-                        num = 0,
-                        cont = 0,
-                        id = cc.acuerdo_id
-                    nro_acuerdo = cc.nro_acuerdo
-                    fecha = cc.fecha
-                    dia_sem = cc.dia_sem
-                    detalle = cc.detalle
-                    data = { nro_acuerdo, fecha, dia_sem, detalle }
-                    if (snapshot.exists()) {
-                        snapshot.some((childSnapshot) => {
-                            var vuelta = "vuelta numero " + num
-                                // console.log(childSnapshot.key)
-                            console.log(vuelta)
-                            childKey[isss] = childSnapshot.key
-                            childSnapshot = snapshot.val()
-                            if (childKey[isss] == id) {
-                                var updates = {}
-                                updates['/RAM/' + id] = data
-                                conn.ref().update(updates, (err) => {
-                                    if (err) {
-                                        console.log(err)
-                                    } else {
-                                        console.log("actualizado")
-                                    }
-                                })
-                                console.log('entro a actualizar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
-                                numsnapshot = 1
-                                return true
-                            }
-                            num++
-                        });
-                        numsnao++
-                        console.log(num)
-                        if (numsnapshot == 0) {
-                            conn.ref('RAM').child(id).set(data, async(err) => {
-                                if (err) {
-                                    console.log('error al guardar el dato con el id: ' + id + ' en la nube')
-                                } else {
-                                    console.log('exito')
-                                }
-                                numsnapshot = 2
-                                console.log('entro a guardar acuerdo_id de firebase', childKey[isss], " acuerdo_id de mongo=", id)
-                            })
-                        }
-                        // console.log(numsnapshot)
-                        // if (numsnapshot == 0) {
-                        //     console.log("entro a eliminar el acuerdo_id de firebase ", childKey[isss])
-                        // }
-                        // }
-                        isss++
-                    } else {
-                        conn.ref('RAM').child(id).set(data, async(err) => {
-                            if (err) {
-                                console.log('error al guardar el dato con el id: ' + id + ' en la nube')
-                            } else {
-                                console.log('La base de datos estaba vacia')
-                                console.log('Contacto guardado con el id ' + id)
-                            }
-                        })
-
-                    }
-
-                });
-                console.log(cc.length)
-                if (numsnao >= cc.length) {
-                    console.log('entro')
-                    db.find(cb)
-                }
-                iss++
-            }
-            // }
-        }, function(error) {
-            console.log('no entro error' + error);
-        })
-    })
 }
 
 ACModel.SyncMongo = (cb) => {
@@ -320,7 +237,7 @@ ACModel.search = (num, search1, search2, cb) => {
     } else if (num == 5) {
         db.find({ dia_sem: Regex }).exec(cb)
     } else if (num == 6) {
-        db.find({ $or: [{ fecha: Regex }, { dia_sem: Regex2 }] }).exec(cb)
+        db.find({ $and: [{ fecha: Regex }, { dia_sem: Regex2 }] }).exec(cb)
     }
 }
 

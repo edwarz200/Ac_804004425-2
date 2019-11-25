@@ -70,7 +70,7 @@ function A_C(value){
     }
 }
 
-function myfun(h_d, h, e, s, b,c) {
+function myfun(h_d, h, e, s, b,c,elim_d) {
     var select = 0,
         selectS = 0,
         inputGroupSelect01 = document.getElementById("inputGroupSelect01"),
@@ -90,13 +90,12 @@ function myfun(h_d, h, e, s, b,c) {
         select = 2
     }
     document.querySelector(".selectE").options.item(select).setAttribute('selected', false)
-
     if (h == "search") {
         document.querySelector(".selectE").setAttribute('hidden', false)
         document.querySelector(".Ag").removeAttribute('hidden')
-    } else if (h == "search_ag")
+    } else if (h == "elim_d"){
         document.querySelector(".selectE").setAttribute('hidden', false)
-    else {
+    } else {
         document.querySelector(".selectE").removeAttribute('hidden')
         document.querySelector(".Ag").setAttribute('hidden', false)
     }
