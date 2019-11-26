@@ -12,15 +12,17 @@ window.onload = () => {
     lista2.onchange = () => {
         redirect("C_R", lista2.value)
     }
-    search.onchange = ()=>{
-        console.log(search.value)
-        if(search.value=="Fecha del acuerdo"){  
-            span_fecha.classList.remove('span2')
-            span_fecha.classList.add('span')
-            numspan = 1
-        }else if(numspan==1){
-            span_fecha.classList.add('span2')
-            span_fecha.classList.remove('span')
+    if(search != null){
+        search.onchange = ()=>{
+            console.log(search.value)
+            if(search.value=="Fecha del acuerdo"){  
+                span_fecha.classList.remove('span2')
+                span_fecha.classList.add('span')
+                numspan = 1
+            }else if(numspan==1){
+                span_fecha.classList.add('span2')
+                span_fecha.classList.remove('span')
+            }
         }
     }
 }

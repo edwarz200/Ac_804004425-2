@@ -8,7 +8,7 @@ router
     .get('/C_R:CoRoS', ACController.close_reset_sync)
     .get('/S_U_E:value', ACController.getAll)
     .get('/a_pag=:page', ACController.getAll)
-    .get('/S_U_E:value/:page', ACController.getAll)
+    .get('/S_U_E:value/a_pag=:page', ACController.getAll)
     .get('/search/SR:value_search', ACController.searchForm)
     .post('/save', ACController.push)
     // .get('/save:guardado', ACController.getAll)

@@ -72,15 +72,17 @@ ACController.getAll = (req, res, next) => {
     var letras_a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
         letras_A = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         cant = req.params.cant,
-        m_idarray = []
+        m_idarray = [],
+        elim = ""
 
     let H_D = req.params.value,
-        perPage = 5,
+        perPage = 10,
         savee = req.params.guardado,
         childKey = "no paso",
         c, save, num = 0,
         cont,
-        page = req.params.page
+        page = req.params.page || 1
+        console.log(page)
     ACModel.getAll(perPage, page, (err, rows) => {
         // navigator.onLine ? console.log('online') : console.log('offline');
         db.countDocuments((err,count)=>{
@@ -124,6 +126,7 @@ ACController.getAll = (req, res, next) => {
                 }
                 if (String(H_D).indexOf(":Habilitar") != -1) {
                     c = 'false'
+                    elim = "S_U_E:Habilitar/"
                     if (H_D == ":Habilitar2")
                         save = "Acuerdo eliminado con exito"
                 } else if (H_D == ":Varios") {
@@ -151,7 +154,10 @@ ACController.getAll = (req, res, next) => {
                                         cont: cont,
                                         disables: c,
                                         data: rows,
+                                        elims: elim,
+                                        previous: parseInt(page)-1,
                                         current: page,
+                                        next: parseInt(page)+1,
                                         pages: Math.ceil(count / perPage),
                                         data_save: save,
                                         data_id: m_idarray,
@@ -164,7 +170,10 @@ ACController.getAll = (req, res, next) => {
                                         cont: cont,
                                         disables: c,
                                         data: rows,
+                                        elims: elim,
+                                        previous: parseInt(page)-1,
                                         current: page,
+                                        next: parseInt(page)+1,
                                         pages: Math.ceil(count / perPage),
                                         data_save: save,
                                         data_id: m_idarray,
@@ -182,7 +191,10 @@ ACController.getAll = (req, res, next) => {
                         cont: cont,
                         disables: c,
                         data: rows,
+                        elims: elim,
+                        previous: parseInt(page)-1,
                         current: page,
+                        next: parseInt(page)+1,
                         pages: Math.ceil(count / perPage),
                         data_save: save,
                         data_id: m_idarray,
